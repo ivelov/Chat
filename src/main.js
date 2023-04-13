@@ -5,7 +5,7 @@ import "buefy/dist/buefy.css";
 import axios from "./plugins/axios";
 import VueCookies from "vue-cookies";
 import store from "./plugins/store";
-import router from "./plugins/router"
+import router from "./plugins/router";
 
 Vue.config.productionTip = false;
 

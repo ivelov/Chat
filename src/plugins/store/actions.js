@@ -6,7 +6,7 @@ export default {
     async login(state, data) {
         return new Promise((resolve, reject) => {
             axios
-                .post("/V1/login", data)
+                .post("/api/login", data)
                 .then((response) => {
                     axios.defaults.headers.common["Authorization"] =
                         "Bearer " + response.data.token;
@@ -43,18 +43,20 @@ export default {
     async register(state, data) {
         return new Promise((resolve, reject) => {
             axios
-                .post("/api/register", data)
+                .post("/V1/api/register", data)
                 .then((response) => {
-                    axios.defaults.headers.common["Authorization"] =
-                        "Bearer " + response.data.token;
+                    // axios.defaults.headers.common["Authorization"] =
+                    //     "Bearer " + response.data.token;
 
-                    VueCookies.set("apiToken", response.data.token);
+                    // VueCookies.set("apiToken", response.data.token);
 
-                    state.commit("setUser", response.data.user);
+                    // state.commit("setUser", response.data.user);
 
-                    resolve(response.data);
+                    // resolve(response.data);
+                    console.log(response);
                 })
                 .catch((reason) => {
+                    console.log(reason.response);
                     reject(reason.response);
                 });
         });

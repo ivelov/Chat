@@ -86,7 +86,7 @@ export default {
           this.$store
               .dispatch("register", this.data)
               .then(() => {
-                  this.$router.push("/");
+                  // this.$router.push("/");
               })
               .catch((response) => {
                   this.errors = response.data.errors;
