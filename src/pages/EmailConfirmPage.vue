@@ -3,8 +3,8 @@
     <div class="mt-4"></div>
     <section class="container">
       <p v-if="success" class="has-text-centered">
-        Email confirmed successfully!
-        <router-link to="/login">Log in</router-link> to procceed
+        Email confirmed successfully! You may close this page or go
+        <router-link to="/" class="is-underlined">home</router-link>
       </p>
       <p class="has-text-centered" v-else>Wait...</p>
     </section>
@@ -20,6 +20,8 @@ export default {
   },
   mounted() {
     let url = "email/verify/";
+
+    //Add user id and token to url
     let userId = "";
     let token = "";
     for (const key in this.$route.params) {
@@ -31,6 +33,7 @@ export default {
     }
     url = url + userId + "/" + token;
 
+    //Add query params to url
     let expires = "";
     let signature = "";
     for (const key in this.$route.query) {
@@ -47,11 +50,19 @@ export default {
       .then(() => {
         this.success = true;
       })
-      .catch(() => {
-        this.$buefy.notification.open({
-          message: "An error occurred!",
-          type: "is-danger",
-        });
+      .catch((reason) => {
+        if (reason.response.status === 401) {
+          this.$buefy.notification.open({
+            duration: 5000,
+            message: "You must be logged in to perform this action",
+            type: "is-danger",
+          });
+        } else {
+          this.$buefy.notification.open({
+            message: "An error occurred!",
+            type: "is-danger",
+          });
+        }
       });
   },
 };

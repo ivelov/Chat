@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import HomePage from "../pages/HelloWorld.vue";
+import HomePage from "../pages/HomePage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import EmailConfirmPage from "../pages/EmailConfirmPage.vue";

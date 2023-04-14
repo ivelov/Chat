@@ -55,7 +55,6 @@ export default {
                     resolve(response.data);
                 })
                 .catch((reason) => {
-                    console.log(reason.response);
                     reject(reason.response);
                 });
         });
@@ -64,6 +63,21 @@ export default {
         return new Promise((resolve) => {
             axios
                 .get("/V1/api/user")
+                .then((response) => {
+                    state.commit("setUser", response.data);
+                    resolve(response.data);
+                })
+                .catch(() => {
+                    state.commit("setUser", null);
+                    VueCookies.remove("apiToken");
+                    resolve(false);
+                });
+        });
+    },
+    async sendMail(state) {
+        return new Promise((resolve) => {
+            axios
+                .post("/V1/api/email/verification-notification")
                 .then((response) => {
                     state.commit("setUser", response.data);
                     resolve(response.data);
