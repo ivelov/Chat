@@ -6,7 +6,7 @@ export default {
     async login(state, data) {
         return new Promise((resolve, reject) => {
             axios
-                .post("/api/login", data)
+                .post("/V1/api/login", data)
                 .then((response) => {
                     axios.defaults.headers.common["Authorization"] =
                         "Bearer " + response.data.token;
@@ -25,7 +25,7 @@ export default {
     async logout(state) {
         return new Promise((resolve, reject) => {
             axios
-                .post("/api/logout")
+                .post("/V1/api/logout")
                 .then((response) => {
                     delete axios.defaults.headers.common["Authorization"];
 
@@ -45,15 +45,14 @@ export default {
             axios
                 .post("/V1/api/register", data)
                 .then((response) => {
-                    // axios.defaults.headers.common["Authorization"] =
-                    //     "Bearer " + response.data.token;
+                    axios.defaults.headers.common["Authorization"] =
+                        "Bearer " + response.data.token;
 
-                    // VueCookies.set("apiToken", response.data.token);
+                    VueCookies.set("apiToken", response.data.token);
 
-                    // state.commit("setUser", response.data.user);
+                    state.commit("setUser", response.data.user);
 
-                    // resolve(response.data);
-                    console.log(response);
+                    resolve(response.data);
                 })
                 .catch((reason) => {
                     console.log(reason.response);
@@ -62,19 +61,18 @@ export default {
         });
     },
     async defineUser(state) {
-        state;
-        // return new Promise((resolve) => {
-        //     axios
-        //         .get("/api/user")
-        //         .then((response) => {
-        //             state.commit("setUser", response.data);
-        //             resolve(response.data);
-        //         })
-        //         .catch(() => {
-        //             state.commit("setUser", null);
-        //             VueCookies.remove("apiToken");
-        //             resolve(false);
-        //         });
-        // });
+        return new Promise((resolve) => {
+            axios
+                .get("/V1/api/user")
+                .then((response) => {
+                    state.commit("setUser", response.data);
+                    resolve(response.data);
+                })
+                .catch(() => {
+                    state.commit("setUser", null);
+                    VueCookies.remove("apiToken");
+                    resolve(false);
+                });
+        });
     },
 };

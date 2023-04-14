@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import HomePage from "../pages/HelloWorld.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
+import EmailConfirmPage from "../pages/EmailConfirmPage.vue";
 
 Vue.use(VueRouter);
 const router = new VueRouter({
@@ -18,6 +19,10 @@ const router = new VueRouter({
         {
             path: "/login",
             component: LoginPage,
+        },
+        {
+            path: "/verify/:userId/:token",
+            component: EmailConfirmPage,
         },
     ],
     mode: "history",
