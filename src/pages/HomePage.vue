@@ -25,6 +25,7 @@ export default {
       this.loading = true;
       this.$store.dispatch("logout").then(() => {
         this.loading = false;
+        this.$router.push('/login');
       });
     },
   },
