@@ -1,9 +1,13 @@
 export default {
     //sync
-    setAuth(state, isAuth) {
-        state.isAuth = isAuth;
+    setAuth(state, payload) {
+        state.isAuth = payload;
     },
-    setUser(state, user) {
-        state.user = user;
+    setUser(state, payload) {
+        payload.photo = `${process.env.VUE_APP_API_URL}/${payload.photo}`;
+        state.user = payload;
+    },
+    setChats(state, payload) {
+        state.chat = payload;
     },
 };

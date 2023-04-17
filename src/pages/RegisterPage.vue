@@ -32,7 +32,7 @@
         </b-field>
 
         <b-field
-          label="Nickname"
+          label="Name"
           :type="errors && errors.name ? 'is-danger' : ''"
           :message="errors && errors.name ? errors.name[0] : ''"
         >

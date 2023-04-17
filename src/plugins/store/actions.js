@@ -89,4 +89,17 @@ export default {
                 });
         });
     },
+    async getChats(state) {
+        return new Promise((resolve, reject) => {
+            axios
+                .get("/V1/api/chats")
+                .then((response) => {
+                    state.commit("setChats", response.data);
+                    resolve(response.data);
+                })
+                .catch(() => {
+                    reject();
+                });
+        });
+    },
 };
