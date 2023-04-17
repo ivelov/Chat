@@ -1,37 +1,62 @@
 <template>
-  <section>
-    <div class="is-flex">
+  <section class="has-background-info-dark">
+    <!-- User info -->
+    <div class="is-flex is-align-content-center">
       <img
         class="avatar"
         :src="$store.state.user.photo"
         alt="avatar"
         @click="photoClick"
       />
-      <p>
+      <span class="my-auto ml-3 has-text-white">
         {{ userName }}
-      </p>
+      </span>
     </div>
 
-    <div class="is-flex is-align-content-center">
-      <b-button
-          @click="newChat"
-          class="is-primary"
-          outlined
-        >
-        New chat
-        </b-button>
+    <!-- New chat btn -->
+    <div class="is-flex is-align-content-center mt-5">
+      <b-button @click="newChat" class="is-primary"> New chat </b-button>
     </div>
 
     <!-- Chat list -->
-    <ul v-for="chat in $store.state.chats" :key="chat.id">
+    <ul
+      v-for="chat in $store.state.chats"
+      :key="chat.id"
+      class="mt-3 has-text-white"
+    >
       <li class="is-flex">
-        <img class="avatar" :src="chat.avatar" alt="chat avatar" />
-        <div class="is-clipped">
+        <img
+          class="avatar"
+          :src="`${apiUrl}/${chat.avatar}`"
+          alt="chat avatar"
+        />
+
+        <div class="ml-3 w-full">
           <p>
-            {{ chat.lastMessage.substring(0, 50) }}
+            {{ chat.name }}
           </p>
+
+          <div
+            class="is-flex is-justify-content-space-between is-align-content-center is-size-7"
+          >
+            <div class="is-clipped my-auto">
+              <span>
+                {{
+                  chat.lastMessage
+                    ? chat.lastMessage.length > 14
+                      ? chat.lastMessage.substring(0, 14) + "..."
+                      : chat.lastMessage
+                    : "12345678901234"
+                }}
+              </span>
+            </div>
+            <div class="unread">
+              <div>
+                {{ chat.unread_count === 0 ? "99+" : chat.unreadedCount }}
+              </div>
+            </div>
+          </div>
         </div>
-        <p>{{ chat.unreadedCount === 0 ? "" : chat.unreadedCount }}</p>
       </li>
     </ul>
   </section>
@@ -50,49 +75,52 @@ export default {
       return this.$store.getters.getUserName;
     },
   },
-  mounted() {},
+  mounted() {
+    this.$store.dispatch("getChats");
+  },
   methods: {
     photoClick() {
       ///////////////////
       console.log("photo");
     },
-    newChat(){
+    newChat() {
       this.$buefy.dialog.prompt({
-          message: 'Enter user email',
-          inputAttrs: {
-              type: 'email',
-          },
-          confirmText: 'Add',
-          trapFocus: true,
-          closeOnConfirm: false,
-          onConfirm: (email, {close}) => {
-            if(this.addChatLoading){
-              return;
-            }
-            this.addChatLoading = true;
-
-            this.$store.dispatch('addChat', email)
-              .then(()=>{
-                close();
-              })
-              .catch((response)=>{
-                if(response.data?.errors?.email){
-                  this.$buefy.notification.open({
-                    message: response.data.errors.email,
-                    type: "is-danger",
-                  });
-                }else{
-                  this.$buefy.notification.open({
-                    message: "An error occurred!",
-                    type: "is-danger",
-                  });
-                }
-              })
-              .finally(()=>{
-                this.addChatLoading = false;
-              })
+        message: "Enter user email",
+        inputAttrs: {
+          type: "email",
+        },
+        confirmText: "Add",
+        trapFocus: true,
+        closeOnConfirm: false,
+        onConfirm: (email, { close }) => {
+          if (this.addChatLoading) {
+            return;
           }
-      })
+          this.addChatLoading = true;
+
+          this.$store
+            .dispatch("addChat", email)
+            .then(() => {
+              close();
+            })
+            .catch((response) => {
+              if (response.data?.errors?.email) {
+                this.$buefy.notification.open({
+                  message: response.data.errors.email,
+                  type: "is-danger",
+                });
+              } else {
+                this.$buefy.notification.open({
+                  message: "An error occurred!",
+                  type: "is-danger",
+                });
+              }
+            })
+            .finally(() => {
+              this.addChatLoading = false;
+            });
+        },
+      });
     },
   },
 };
@@ -102,5 +130,20 @@ export default {
 .avatar {
   width: 50px;
   height: 50px;
+}
+.w-full {
+  width: 100%;
+}
+.unread {
+  display: table;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  background-color: dodgerblue;
+  border-radius: 50%;
+}
+.unread * {
+  display: table-cell;
+  vertical-align: middle;
 }
 </style>

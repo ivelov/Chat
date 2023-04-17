@@ -1,12 +1,11 @@
 <template>
   <div>
-    <div class="is-flex p-4">
-      <ChatsComponent class="left"></ChatsComponent>
-      <div class="right">
+    <div class="is-flex p-4 has-background-info-dark is-overlay">
+      <ChatsComponent class="left pr-4"></ChatsComponent>
+      <div class="right has-background-link-dark">
         <b-button
           @click="logout"
           class="is-primary"
-          outlined
           :loading="loading"
           :disabled="loading"
         >
@@ -46,6 +45,7 @@ export default {
 <style scoped>
   .left{
     flex-basis: 200px;
+    height: 100%;
   }
   .right{
     flex-grow: 1;

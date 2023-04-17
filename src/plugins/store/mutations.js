@@ -1,13 +1,27 @@
+import Vue from "vue";
 export default {
     //sync
-    setAuth(state, payload) {
-        state.isAuth = payload;
+    setAuth(state, isAuth) {
+        state.isAuth = isAuth;
     },
-    setUser(state, payload) {
-        payload.photo = `${process.env.VUE_APP_API_URL}/${payload.photo}`;
-        state.user = payload;
+    setUser(state, user) {
+        if(user){
+            user.photo = `${process.env.VUE_APP_API_URL}/${user.photo}`;
+        }
+        state.user = user;
     },
-    setChats(state, payload) {
-        state.chat = payload;
+    setChats(state, chats) {
+        state.chats = chats;
     },
+    addChat(state, chat) {
+        if(state.chats[chat.id]){
+            return;
+        }else{
+            Vue.set(state.chats, chat.id, chat);
+            state.chats[chat.id] = chat;
+        }
+    },
+    setActiveChat(state, index){
+        state.activeChatIndex = index;
+    }
 };
