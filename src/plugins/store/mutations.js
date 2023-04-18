@@ -13,7 +13,7 @@ export default {
     setChats(state, chats) {
         state.chats = chats;
     },
-    addChat(state, chat) {
+    setChat(state, chat) {
         if(state.chats[chat.id]){
             return;
         }else{
@@ -23,5 +23,5 @@ export default {
     },
     setActiveChat(state, index){
         state.activeChatIndex = index;
-    }
+    },
 };

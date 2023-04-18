@@ -7,4 +7,13 @@ export default {
       ? state.user.nickname
       : state.user.name;
   },
+  getActiveChat(state){
+    if(!state.activeChatIndex){
+      return null;
+    }
+    return state.chats[state.activeChatIndex];
+  },
+  getActiveChatIndex(state){
+    return state.activeChatIndex;
+  },
 };

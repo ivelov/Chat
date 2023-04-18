@@ -20,17 +20,20 @@
 
     <!-- Chat list -->
     <ul
-      v-for="chat in $store.state.chats"
-      :key="chat.id"
+      v-for="(chat, id) in $store.state.chats"
+      :key="id"
       class="mt-3 has-text-white"
     >
-      <li class="is-flex">
+      <li class="is-flex"
+      @click="selectChat(id)">
+        <!-- Avatar -->
         <img
           class="avatar"
           :src="`${apiUrl}/${chat.avatar}`"
           alt="chat avatar"
         />
 
+        <!-- Chat name -->
         <div class="ml-3 w-full">
           <p>
             {{ chat.name }}
@@ -40,6 +43,7 @@
             class="is-flex is-justify-content-space-between is-align-content-center is-size-7"
           >
             <div class="is-clipped my-auto">
+              <!-- Last message stripped -->
               <span>
                 {{
                   chat.lastMessage
@@ -50,6 +54,8 @@
                 }}
               </span>
             </div>
+
+            <!-- Unread count -->
             <div class="unread">
               <div>
                 {{ chat.unread_count === 0 ? "99+" : chat.unreadedCount }}
@@ -121,6 +127,9 @@ export default {
             });
         },
       });
+    },
+    selectChat(id){
+      this.$store.dispatch('setActiveChat', id);
     },
   },
 };

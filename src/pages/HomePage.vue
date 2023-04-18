@@ -3,14 +3,15 @@
     <div class="is-flex p-4 has-background-info-dark is-overlay">
       <ChatsComponent class="left pr-4"></ChatsComponent>
       <div class="right has-background-link-dark">
-        <b-button
+        <!-- <b-button
           @click="logout"
           class="is-primary"
           :loading="loading"
           :disabled="loading"
         >
           Log out
-        </b-button>
+        </b-button> -->
+        <ChatComponent></ChatComponent>
       </div>
     </div>
   </div>
@@ -18,6 +19,7 @@
 
 <script>
 import ChatsComponent from "../components/ChatsComponent.vue";
+import ChatComponent from "../components/ChatComponent.vue";
 
 export default {
   name: "HomePage",
@@ -38,7 +40,7 @@ export default {
       });
     },
   },
-  components: {ChatsComponent}
+  components: {ChatsComponent, ChatComponent}
 };
 </script>
 

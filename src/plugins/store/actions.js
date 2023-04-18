@@ -107,7 +107,7 @@ export default {
       axios
         .post("/V1/api/chats", { email: email })
         .then((response) => {
-          state.commit("addChat", response.data);
+          state.commit("setChat", response.data);
           state.commit("setActiveChat", response.data.id);
           resolve(response.data);
         })
@@ -115,5 +115,30 @@ export default {
           reject(reason.response);
         });
     });
+  },
+  async getActiveChatInfo(state) {
+    if(!state.getters.getActiveChatIndex){
+      return;
+    }
+    //If messages already loaded
+    if(state.getters.getActiveChat?.messages){
+      return;
+    }
+    return new Promise((resolve, reject) => {
+      axios
+        .get("/V1/api/chats/"+state.getters.getActiveChatIndex)
+        .then((response) => {
+          console.log(response.data);
+          state.commit("setChat", response.data);
+          resolve(response.data);
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
+  }, 
+  async setActiveChat(state, index) {
+    state.commit("setActiveChat", index);
+    state.dispatch('getActiveChatInfo');
   },
 };
