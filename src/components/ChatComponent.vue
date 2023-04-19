@@ -20,11 +20,26 @@
       </div>
 
       <!-- Messages -->
-      <div class="is-flex-grow-1 has-background-color-dodger overflow-y-scroll py-5 px-2">
+      <div
+        class="is-flex-grow-1 has-background-color-dodger overflow-y-scroll-hidden py-5 px-2"
+      >
         <ul class="is-flex is-flex-direction-column-reverse">
-          <li v-for="(message, index) in messages" :key="index" :class="message.fromYou?'message-right':''" class="message">
-            {{ message.message }}
+          <li
+          v-if="messagesLoading"
+            class="message message-right mb-2 is-relative h-34 loading"
+          >
+            Sending...
           </li>
+
+          <li
+            v-for="(message, index) in messages"
+            :key="index"
+            :class="message.fromYou ? 'message-right' : ''"
+            class="message mb-2"
+            v-html="message.message"
+          ></li>
+
+          
         </ul>
       </div>
 
@@ -60,15 +75,19 @@ export default {
   data() {
     return {
       muteLoading: false,
-      message: ""
+      message: "",
+      messagesSending: 0,
     };
   },
   computed: {
     chat() {
       return this.$store.getters.getActiveChat;
     },
-    messages(){
+    messages() {
       return this.$store.getters.getActiveChatMessages;
+    },
+    messagesLoading(){
+      return this.messagesSending > 0;
     },
   },
   mounted() {},
@@ -84,10 +103,13 @@ export default {
     },
     sendMessage() {
       let message = this.message.trim();
-      if(message.length === 0){
+      if (message.length === 0) {
         return;
       }
-      this.$store.dispatch("sendMessage", message);
+      this.messagesSending++;
+      this.$store.dispatch("sendMessage", message).finally(()=>{
+        this.messagesSending--;
+      });
       this.message = "";
     },
   },
@@ -101,16 +123,16 @@ export default {
 .has-background-color-dodger {
   background-color: dodgerblue;
 }
-.overflow-y-scroll-hidden{
+.overflow-y-scroll-hidden {
   overflow-y: scroll;
-  -ms-overflow-style: none; 
-  scrollbar-width: none;  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-.overflow-y-scroll-hidden::-webkit-scrollbar{
+.overflow-y-scroll-hidden::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
-.message{
+.message {
   max-width: 50%;
   background-color: aqua;
   padding: 5px;
@@ -118,10 +140,13 @@ export default {
   padding-right: 15px;
   border-radius: 10px;
 }
-.message-right{
+.message-right {
   text-align: right;
   margin-right: 0px;
   margin-left: auto;
+}
+.loading{
+  background-color: darkgray;
 }
 </style>
 
