@@ -14,14 +14,20 @@ export default {
         state.chats = chats;
     },
     setChat(state, chat) {
-        if(state.chats[chat.id]){
-            return;
-        }else{
-            Vue.set(state.chats, chat.id, chat);
-            state.chats[chat.id] = chat;
-        }
+        Vue.set(state.chats, chat.id, chat);
     },
     setActiveChat(state, index){
         state.activeChatIndex = index;
     },
+    addNewMessages(state, payload){
+        if(!state.chats[payload.chatId]){
+            return;
+        }
+        
+        if(!state.chats[payload.chatId].messages){
+            state.chats[payload.chatId].messages = [];
+        }
+
+        state.chats[payload.chatId].messages.unshift(...payload.messages);
+    }
 };

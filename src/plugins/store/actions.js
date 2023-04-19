@@ -117,18 +117,18 @@ export default {
     });
   },
   async getActiveChatInfo(state) {
-    if(!state.getters.getActiveChatIndex){
+    if (!state.getters.getActiveChatIndex) {
+      console.error('Vuex active chat index is null');
       return;
     }
     //If messages already loaded
-    if(state.getters.getActiveChat?.messages){
+    if (state.getters.getActiveChat?.messages) {
       return;
     }
     return new Promise((resolve, reject) => {
       axios
-        .get("/V1/api/chats/"+state.getters.getActiveChatIndex)
+        .get("/V1/api/chats/" + state.getters.getActiveChatIndex)
         .then((response) => {
-          console.log(response.data);
           state.commit("setChat", response.data);
           resolve(response.data);
         })
@@ -136,9 +136,26 @@ export default {
           reject(reason.response);
         });
     });
-  }, 
+  },
   async setActiveChat(state, index) {
     state.commit("setActiveChat", index);
-    state.dispatch('getActiveChatInfo');
+    state.dispatch("getActiveChatInfo");
+  },
+  async sendMessage(state, message) {
+    let chatId = state.getters.getActiveChatIndex;
+    return new Promise((resolve, reject) => {
+      axios
+        .post("/V1/api/chats/" + chatId, { message: message })
+        .then(() => {
+          state.commit("addNewMessages", {
+            messages: [{ message: message, fromYou: true }],
+            chatId: chatId,
+          });
+          resolve();
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
   },
 };

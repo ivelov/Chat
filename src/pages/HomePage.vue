@@ -2,7 +2,7 @@
   <div>
     <div class="is-flex p-4 has-background-info-dark is-overlay">
       <ChatsComponent class="left pr-4"></ChatsComponent>
-      <div class="right has-background-link-dark">
+      <div class="right">
         <!-- <b-button
           @click="logout"
           class="is-primary"

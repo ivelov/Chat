@@ -13,6 +13,12 @@ export default {
     }
     return state.chats[state.activeChatIndex];
   },
+  getActiveChatMessages(state){
+    if(!state.activeChatIndex){
+      return null;
+    }
+    return state.chats[state.activeChatIndex].messages;
+  },
   getActiveChatIndex(state){
     return state.activeChatIndex;
   },

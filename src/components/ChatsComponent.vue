@@ -20,11 +20,11 @@
 
     <!-- Chat list -->
     <ul
-      v-for="(chat, id) in $store.state.chats"
-      :key="id"
       class="mt-3 has-text-white"
     >
       <li class="is-flex"
+      v-for="(chat, id) in $store.state.chats"
+      :key="id"
       @click="selectChat(id)">
         <!-- Avatar -->
         <img
