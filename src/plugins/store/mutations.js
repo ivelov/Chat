@@ -16,6 +16,9 @@ export default {
     setChat(state, chat) {
         Vue.set(state.chats, chat.id, chat);
     },
+    setChatMessages(state, chat) {
+        Vue.set(state.chats[chat.id], 'messages', chat.messages);
+    },
     setActiveChat(state, index){
         state.activeChatIndex = index;
     },
@@ -29,5 +32,8 @@ export default {
         }
 
         state.chats[payload.chatId].messages.unshift(...payload.messages);
-    }
+    },
+    setLastMessage(state, payload){
+        Vue.set(state.chats[payload.chatId], 'last_message', payload.message);
+    },
 };

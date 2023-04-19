@@ -6,7 +6,7 @@
     >
       <!-- Header -->
       <div
-        class="is-flex is-justify-content-space-between is-align-content-center px-3 h-50 is-flex-grow-0 has-text-white has-background-link-dark"
+        class="is-flex is-justify-content-space-between is-align-content-center px-3 py-1 h-50 is-flex-grow-0 has-text-white has-background-link-dark"
       >
         <div class="my-auto">{{ chat.name }}</div>
         <b-button
@@ -44,7 +44,7 @@
       </div>
 
       <!-- Input field -->
-      <div class="h-50 is-flex-grow-0" @keyup.enter.exact="sendMessage">
+      <div class="h-50 is-flex-grow-0" @keydown.enter.exact.prevent="sendMessage">
         <b-field>
           <b-input
             v-model="message"
@@ -133,6 +133,7 @@ export default {
   height: 0;
 }
 .message {
+  white-space: pre;
   max-width: 50%;
   background-color: aqua;
   padding: 5px;

@@ -46,19 +46,19 @@
               <!-- Last message stripped -->
               <span>
                 {{
-                  chat.lastMessage
-                    ? chat.lastMessage.length > 14
-                      ? chat.lastMessage.substring(0, 14) + "..."
-                      : chat.lastMessage
-                    : "12345678901234"
+                  chat.last_message
+                    ? chat.last_message.length > 14
+                      ? chat.last_message.substring(0, 14) + "..."
+                      : chat.last_message
+                    : ""
                 }}
               </span>
             </div>
 
             <!-- Unread count -->
-            <div class="unread">
+            <div class="unread" v-if="chat.unread_count > 0">
               <div>
-                {{ chat.unread_count === 0 ? "99+" : chat.unreadedCount }}
+                {{ chat.unreadedCount }}
               </div>
             </div>
           </div>

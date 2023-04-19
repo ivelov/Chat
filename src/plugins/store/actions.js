@@ -118,7 +118,7 @@ export default {
   },
   async getActiveChatInfo(state) {
     if (!state.getters.getActiveChatIndex) {
-      console.error('Vuex active chat index is null');
+      console.error("Vuex active chat index is null");
       return;
     }
     //If messages already loaded
@@ -129,7 +129,7 @@ export default {
       axios
         .get("/V1/api/chats/" + state.getters.getActiveChatIndex)
         .then((response) => {
-          state.commit("setChat", response.data);
+          state.commit("setChatMessages", response.data);
           resolve(response.data);
         })
         .catch((reason) => {
@@ -151,6 +151,7 @@ export default {
             messages: [{ message: message, fromYou: true }],
             chatId: chatId,
           });
+          state.commit("setLastMessage", { message: message, chatId: chatId });
           resolve();
         })
         .catch((reason) => {
