@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import IdleMixin from "../mixins/IdleMixin.vue";
 export default {
   data() {
     return {
@@ -94,7 +95,9 @@ export default {
       return this.messagesSending > 0;
     },
   },
-  mounted() {},
+  mounted(){
+    this.handleUnIdle = this.handleUnIdleFun;
+  },
   methods: {
     toggleMute() {
       if (this.muteLoading) {
@@ -116,7 +119,14 @@ export default {
       });
       this.message = "";
     },
+    handleUnIdleFun(){
+      if(!this.chat){
+        return;
+      }
+      this.$store.commit('resetUnreadCount', this.$store.getters.getActiveChat);
+    }
   },
+  mixins:[IdleMixin]
 };
 </script>
 
