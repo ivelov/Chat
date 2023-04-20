@@ -6,12 +6,15 @@ import axios from "./plugins/axios";
 import VueCookies from "vue-cookies";
 import store from "./plugins/store";
 import router from "./plugins/router";
+import VueChatScroll from 'vue-chat-scroll';
 
 Vue.config.productionTip = false;
 
 Vue.use(Buefy);
 
 Vue.use(VueCookies);
+
+Vue.use(VueChatScroll);
 
 const app = new Vue({
   axios,

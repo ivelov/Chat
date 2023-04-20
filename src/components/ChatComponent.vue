@@ -22,10 +22,11 @@
       <!-- Messages -->
       <div
         class="is-flex-grow-1 has-background-color-dodger overflow-y-scroll-hidden py-5 px-2"
+        v-chat-scroll
       >
         <ul class="is-flex is-flex-direction-column-reverse">
           <li
-          v-if="messagesLoading"
+            v-if="messagesLoading"
             class="message message-right mb-2 is-relative h-34 loading"
           >
             Sending...
@@ -38,13 +39,14 @@
             class="message mb-2"
             v-html="message.message"
           ></li>
-
-          
         </ul>
       </div>
 
       <!-- Input field -->
-      <div class="h-50 is-flex-grow-0" @keydown.enter.exact.prevent="sendMessage">
+      <div
+        class="h-50 is-flex-grow-0"
+        @keydown.enter.exact.prevent="sendMessage"
+      >
         <b-field>
           <b-input
             v-model="message"
@@ -59,6 +61,8 @@
         </b-field>
       </div>
     </div>
+
+    <!-- Select a chat -->
     <div
       v-else
       class="h-full is-flex is-align-content-center is-flex-direction-column"
@@ -86,7 +90,7 @@ export default {
     messages() {
       return this.$store.getters.getActiveChatMessages;
     },
-    messagesLoading(){
+    messagesLoading() {
       return this.messagesSending > 0;
     },
   },
@@ -107,7 +111,7 @@ export default {
         return;
       }
       this.messagesSending++;
-      this.$store.dispatch("sendMessage", message).finally(()=>{
+      this.$store.dispatch("sendMessage", message).finally(() => {
         this.messagesSending--;
       });
       this.message = "";
@@ -133,20 +137,24 @@ export default {
   height: 0;
 }
 .message {
-  white-space: pre;
-  max-width: 50%;
+  max-width: 90%;
   background-color: aqua;
   padding: 5px;
   padding-left: 15px;
   padding-right: 15px;
+  margin-left: 0px;
+  margin-right: auto;
   border-radius: 10px;
+
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 .message-right {
   text-align: right;
   margin-right: 0px;
   margin-left: auto;
 }
-.loading{
+.loading {
   background-color: darkgray;
 }
 </style>

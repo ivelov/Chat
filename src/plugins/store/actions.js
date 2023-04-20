@@ -32,6 +32,8 @@ export default {
           VueCookies.remove("apiToken");
 
           state.commit("setUser", null);
+          state.commit("setChats", {});
+          state.commit("setActiveChat", null);
 
           resolve(response.data);
         })
@@ -153,6 +155,27 @@ export default {
           });
           state.commit("setLastMessage", { message: message, chatId: chatId });
           resolve();
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
+  },
+  async updateUser(state, data) {
+    return new Promise((resolve, reject) => {
+      let formData = new FormData();
+      for (const key in data) {
+        if(data[key]){
+          formData.append(key, data[key]);
+        }
+      }
+
+      axios
+        .post("/V1/api/user/"+state.getters.getUser.id, formData)
+        .then((response) => {
+          state.commit("setUser", response.data);
+
+          resolve(response.data);
         })
         .catch((reason) => {
           reject(reason.response);

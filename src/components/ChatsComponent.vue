@@ -1,7 +1,7 @@
 <template>
   <section class="has-background-info-dark">
     <!-- User info -->
-    <div class="is-flex is-align-content-center">
+    <div class="is-flex is-align-content-center" v-if="$store.getters.isAuth">
       <img
         class="avatar"
         :src="$store.state.user.photo"
@@ -19,13 +19,13 @@
     </div>
 
     <!-- Chat list -->
-    <ul
-      class="mt-3 has-text-white"
-    >
-      <li class="is-flex"
-      v-for="(chat, id) in $store.state.chats"
-      :key="id"
-      @click="selectChat(id)">
+    <ul class="mt-3 has-text-white">
+      <li
+        class="is-flex"
+        v-for="(chat, id) in $store.state.chats"
+        :key="id"
+        @click="selectChat(id)"
+      >
         <!-- Avatar -->
         <img
           class="avatar"
@@ -58,22 +58,30 @@
             <!-- Unread count -->
             <div class="unread" v-if="chat.unread_count > 0">
               <div>
-                {{ chat.unreadedCount }}
+                {{ chat.unread_count }}
               </div>
             </div>
           </div>
         </div>
       </li>
     </ul>
+    <b-modal
+      v-model="userPropertiesModal"
+      trap-focus
+    >
+      <UserActionsComponent></UserActionsComponent>
+    </b-modal>
   </section>
 </template>
 
 <script>
+import UserActionsComponent from "../components/UserActionsComponent.vue";
 export default {
   data() {
     return {
       apiUrl: process.env.VUE_APP_API_URL,
       addChatLoading: false,
+      userPropertiesModal: false,
     };
   },
   computed: {
@@ -86,8 +94,7 @@ export default {
   },
   methods: {
     photoClick() {
-      ///////////////////
-      console.log("photo");
+      this.userPropertiesModal = true;
     },
     newChat() {
       this.$buefy.dialog.prompt({
@@ -128,10 +135,11 @@ export default {
         },
       });
     },
-    selectChat(id){
-      this.$store.dispatch('setActiveChat', id);
+    selectChat(id) {
+      this.$store.dispatch("setActiveChat", id);
     },
   },
+  components: { UserActionsComponent },
 };
 </script>
 
