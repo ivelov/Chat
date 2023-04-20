@@ -1,5 +1,5 @@
 <template>
-  <section class="has-background-info-dark">
+  <section class="has-background-info-dark is-flex is-flex-direction-column">
     <!-- User info -->
     <div class="is-flex is-align-content-center" v-if="$store.getters.isAuth">
       <img
@@ -19,9 +19,10 @@
     </div>
 
     <!-- Chat list -->
-    <ul class="mt-3 has-text-white">
+    <div class="is-flex-grow-1 overflow-y-auto">
+      <ul class="mt-3 has-text-white chat-list">
       <li
-        class="is-flex"
+        class="is-flex mb-3"
         v-for="(chat, id) in $store.state.chats"
         :key="id"
         @click="selectChat(id)"
@@ -65,6 +66,8 @@
         </div>
       </li>
     </ul>
+    </div>
+    
     <b-modal
       v-model="userPropertiesModal"
       trap-focus
@@ -162,5 +165,8 @@ export default {
 .unread * {
   display: table-cell;
   vertical-align: middle;
+}
+.overflow-y-auto{
+  overflow-y: auto;
 }
 </style>
