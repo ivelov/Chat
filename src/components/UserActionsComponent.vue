@@ -126,7 +126,8 @@ export default {
       this.logoutLoading = true;
       this.$store.dispatch("logout").then(() => {
         this.logoutLoading = false;
-        this.$router.push("/login");
+        this.$router.go();
+        // this.$router.push("/login");
       });
     },
     submit() {

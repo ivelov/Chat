@@ -96,6 +96,34 @@ export default {
       axios
         .get("/V1/api/chats")
         .then((response) => {
+
+          let getChatCallback = (chatId)=>{
+            return (data)=>{
+              if(data.userId === state.getters.getUser.id){
+                return;
+              }
+
+              state.commit("addNewMessages", {
+                messages: [{ message: data.message, fromYou: false }],
+                chatId: chatId,
+              });
+              state.commit("setLastMessage", { message: data.message, chatId: chatId });
+
+              if (state.getters.getActiveChatIndex !== chatId) {
+                state.commit('incrementUnreadCount', chatId);
+              }
+
+              if (state.getters.isIdle) {
+                console.log('notify');
+              }
+            }
+          }
+
+          for (const key in response.data) {
+            window.Echo.private('chats.'+key)
+              .listen('NewMessageEvent', getChatCallback(key));
+          }
+          
           state.commit("setChats", response.data);
           resolve(response.data);
         })

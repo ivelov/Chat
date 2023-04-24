@@ -45,4 +45,7 @@ export default {
     incrementUnreadCount(state, chatId){
         state.chats[chatId].unread_count++;
     },
+    setIdle(state, status){
+        state.isIdle = status;
+    },
 };

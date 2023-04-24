@@ -25,4 +25,7 @@ export default {
   getActiveChatIndex(state){
     return state.activeChatIndex;
   },
+  isIdle(state){
+    return state.isIdle;
+  },
 };

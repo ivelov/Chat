@@ -3,16 +3,26 @@ export default {
   data: function () {
     return {
       idleSeconds: 0,
-      idle: false,
       idleAfterSeconds: 60,
       timerId: 0,
       handleIdle() {},
       handleUnIdle() {},
     };
   },
+  computed:{
+    idle:{
+      get(){
+        return this.$store.state.isIdle;
+      },
+      set(value){
+        this.$store.commit('setIdle', value);
+      }
+    }
+  },
   mounted() {
     if (process.env.VUE_APP_API_URL) {
-      this.idleAfterSeconds = process.env.VUE_APP_API_URL;
+      this.idleAfterSeconds = 5;
+      // this.idleAfterSeconds = process.env.VUE_APP_API_URL;
     }
     document.addEventListener("mousemove", this.resetIdle);
     document.addEventListener("click", this.resetIdle);
