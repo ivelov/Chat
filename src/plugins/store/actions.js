@@ -96,34 +96,8 @@ export default {
       axios
         .get("/V1/api/chats")
         .then((response) => {
+          state.dispatch("setListenersToChats", response.data);
 
-          let getChatCallback = (chatId)=>{
-            return (data)=>{
-              if(data.userId === state.getters.getUser.id){
-                return;
-              }
-
-              state.commit("addNewMessages", {
-                messages: [{ message: data.message, fromYou: false }],
-                chatId: chatId,
-              });
-              state.commit("setLastMessage", { message: data.message, chatId: chatId });
-
-              if (state.getters.getActiveChatIndex !== chatId) {
-                state.commit('incrementUnreadCount', chatId);
-              }
-
-              if (state.getters.isIdle) {
-                console.log('notify');
-              }
-            }
-          }
-
-          for (const key in response.data) {
-            window.Echo.private('chats.'+key)
-              .listen('NewMessageEvent', getChatCallback(key));
-          }
-          
           state.commit("setChats", response.data);
           resolve(response.data);
         })
@@ -170,6 +144,10 @@ export default {
   async setActiveChat(state, index) {
     state.commit("setActiveChat", index);
     state.dispatch("getActiveChatInfo");
+    if(state.state.chats[index]?.unread_count > 0){
+      state.dispatch("markAsRead", index);
+      state.commit('resetUnreadCount', index);
+    }
   },
   async sendMessage(state, message) {
     let chatId = state.getters.getActiveChatIndex;
@@ -193,17 +171,66 @@ export default {
     return new Promise((resolve, reject) => {
       let formData = new FormData();
       for (const key in data) {
-        if(data[key]){
+        if (data[key]) {
           formData.append(key, data[key]);
         }
       }
 
       axios
-        .post("/V1/api/user/"+state.getters.getUser.id, formData)
+        .post("/V1/api/user/" + state.state.user.id, formData)
         .then((response) => {
           state.commit("setUser", response.data);
 
           resolve(response.data);
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
+  },
+  async setListenersToChats(state, chats) {
+    let getChatCallback = (chatId) => {
+      return (data) => {
+        if (data.userId === state.state.user.id) {
+          return;
+        }
+
+        state.commit("addNewMessages", {
+          messages: [{ message: data.message, fromYou: false }],
+          chatId: chatId,
+        });
+        state.commit("setLastMessage", {
+          message: data.message,
+          chatId: chatId,
+        });
+
+        if (state.getters.getActiveChatIndex !== chatId) {
+          state.commit("incrementUnreadCount", chatId);
+        }
+
+        //Send notification if user is idle
+        if (state.getters.isIdle) {
+          console.log("notify");
+        // Mark as read if user is not idle
+        } else if (state.getters.getActiveChatIndex === chatId) {
+          state.dispatch("markAsRead", chatId);
+        }
+      };
+    };
+
+    for (const key in chats) {
+      window.Echo.private("chats." + key).listen(
+        "NewMessageEvent",
+        getChatCallback(key)
+      );
+    }
+  },
+  async markAsRead(state, chatId) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`/V1/api/chats/${chatId}/mark-as-read`)
+        .then(() => {
+          resolve();
         })
         .catch((reason) => {
           reject(reason.response);

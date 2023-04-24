@@ -21,9 +21,6 @@ export default {
     },
     setActiveChat(state, index){
         state.activeChatIndex = index;
-        if(state.chats[index]){
-            state.chats[index].unread_count = 0;
-        }
     },
     addNewMessages(state, payload){
         if(!state.chats[payload.chatId]){
@@ -40,6 +37,9 @@ export default {
         Vue.set(state.chats[payload.chatId], 'last_message', payload.message);
     },
     resetUnreadCount(state, chatId){
+        if(!state.chats[chatId]){
+            return;
+        }
         state.chats[chatId].unread_count = 0;
     },
     incrementUnreadCount(state, chatId){

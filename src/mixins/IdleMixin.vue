@@ -21,8 +21,7 @@ export default {
   },
   mounted() {
     if (process.env.VUE_APP_API_URL) {
-      this.idleAfterSeconds = 5;
-      // this.idleAfterSeconds = process.env.VUE_APP_API_URL;
+      this.idleAfterSeconds = process.env.VUE_APP_API_URL;
     }
     document.addEventListener("mousemove", this.resetIdle);
     document.addEventListener("click", this.resetIdle);
