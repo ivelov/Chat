@@ -1,5 +1,6 @@
 import axios from "axios";
 import VueCookies from "vue-cookies";
+import Echo from '@ably/laravel-echo';
 
 export default {
   //async
@@ -14,6 +15,8 @@ export default {
           VueCookies.set("apiToken", response.data.token);
 
           state.commit("setUser", response.data.user);
+
+          state.dispatch("registerEcho");
 
           resolve(response.data);
         })
@@ -53,6 +56,8 @@ export default {
           VueCookies.set("apiToken", response.data.token);
 
           state.commit("setUser", response.data.user);
+
+          state.dispatch("registerEcho");
 
           resolve(response.data);
         })
@@ -121,12 +126,12 @@ export default {
     });
   },
   async getActiveChatInfo(state) {
-    if (!state.getters.getActiveChatIndex) {
-      console.error("Vuex active chat index is null");
+    if (!state.getters.getActiveChat) {
+      console.error("Vuex active chat is null");
       return;
     }
     //If messages already loaded
-    if (state.getters.getActiveChat?.messages) {
+    if (state.getters.getActiveChat.hasMore === false) {
       return;
     }
     return new Promise((resolve, reject) => {
@@ -236,5 +241,15 @@ export default {
           reject(reason.response);
         });
     });
+  },
+  registerEcho() {
+    window.Echo = new Echo({
+      broadcaster: 'ably',
+      authEndpoint: '/V1/broadcasting/auth',
+      auth:{headers:{'authorization': "Bearer " + VueCookies.get("apiToken")}},
+      echoMessages: true, // self-echo for published message is set to false internally.
+      queueMessages: true, // default: true, maintains queue for messages to be sent.
+      disconnectedRetryTimeout: 15000, // Retry connect after 15 seconds when client gets disconnected
+  });
   },
 };
