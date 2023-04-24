@@ -6,4 +6,5 @@ export default {
         : false,
     chats:{},
     activeChatIndex: null,
+    isIdle: false,
 };

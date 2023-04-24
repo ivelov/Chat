@@ -1,5 +1,6 @@
 import axios from "axios";
 import VueCookies from "vue-cookies";
+import Echo from '@ably/laravel-echo';
 
 export default {
   //async
@@ -14,6 +15,8 @@ export default {
           VueCookies.set("apiToken", response.data.token);
 
           state.commit("setUser", response.data.user);
+
+          state.dispatch("registerEcho");
 
           resolve(response.data);
         })
@@ -53,6 +56,8 @@ export default {
           VueCookies.set("apiToken", response.data.token);
 
           state.commit("setUser", response.data.user);
+
+          state.dispatch("registerEcho");
 
           resolve(response.data);
         })
@@ -96,6 +101,8 @@ export default {
       axios
         .get("/V1/api/chats")
         .then((response) => {
+          state.dispatch("setListenersToChats", response.data);
+
           state.commit("setChats", response.data);
           resolve(response.data);
         })
@@ -119,12 +126,12 @@ export default {
     });
   },
   async getActiveChatInfo(state) {
-    if (!state.getters.getActiveChatIndex) {
-      console.error("Vuex active chat index is null");
+    if (!state.getters.getActiveChat) {
+      console.error("Vuex active chat is null");
       return;
     }
     //If messages already loaded
-    if (state.getters.getActiveChat?.messages) {
+    if (state.getters.getActiveChat.hasMore === false) {
       return;
     }
     return new Promise((resolve, reject) => {
@@ -142,6 +149,10 @@ export default {
   async setActiveChat(state, index) {
     state.commit("setActiveChat", index);
     state.dispatch("getActiveChatInfo");
+    if(state.state.chats[index]?.unread_count > 0){
+      state.dispatch("markAsRead", index);
+      state.commit('resetUnreadCount', index);
+    }
   },
   async sendMessage(state, message) {
     let chatId = state.getters.getActiveChatIndex;
@@ -165,13 +176,13 @@ export default {
     return new Promise((resolve, reject) => {
       let formData = new FormData();
       for (const key in data) {
-        if(data[key]){
+        if (data[key]) {
           formData.append(key, data[key]);
         }
       }
 
       axios
-        .post("/V1/api/user/"+state.getters.getUser.id, formData)
+        .post("/V1/api/user/" + state.state.user.id, formData)
         .then((response) => {
           state.commit("setUser", response.data);
 
@@ -181,5 +192,64 @@ export default {
           reject(reason.response);
         });
     });
+  },
+  async setListenersToChats(state, chats) {
+    let getChatCallback = (chatId) => {
+      return (data) => {
+        if (data.userId === state.state.user.id) {
+          return;
+        }
+
+        state.commit("addNewMessages", {
+          messages: [{ message: data.message, fromYou: false }],
+          chatId: chatId,
+        });
+        state.commit("setLastMessage", {
+          message: data.message,
+          chatId: chatId,
+        });
+
+        if (state.getters.getActiveChatIndex !== chatId) {
+          state.commit("incrementUnreadCount", chatId);
+        }
+
+        //Send notification if user is idle
+        if (state.getters.isIdle) {
+          console.log("notify");
+        // Mark as read if user is not idle
+        } else if (state.getters.getActiveChatIndex === chatId) {
+          state.dispatch("markAsRead", chatId);
+        }
+      };
+    };
+
+    for (const key in chats) {
+      window.Echo.private("chats." + key).listen(
+        "NewMessageEvent",
+        getChatCallback(key)
+      );
+    }
+  },
+  async markAsRead(state, chatId) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`/V1/api/chats/${chatId}/mark-as-read`)
+        .then(() => {
+          resolve();
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
+  },
+  registerEcho() {
+    window.Echo = new Echo({
+      broadcaster: 'ably',
+      authEndpoint: '/V1/broadcasting/auth',
+      auth:{headers:{'authorization': "Bearer " + VueCookies.get("apiToken")}},
+      echoMessages: true, // self-echo for published message is set to false internally.
+      queueMessages: true, // default: true, maintains queue for messages to be sent.
+      disconnectedRetryTimeout: 15000, // Retry connect after 15 seconds when client gets disconnected
+  });
   },
 };

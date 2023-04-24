@@ -8,6 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@ably/laravel-echo": "^1.0.2",
+    "ably": "^1.2.39",
     "buefy": "^0.9.23",
     "core-js": "^3.8.3",
     "vue": "^2.6.14",
