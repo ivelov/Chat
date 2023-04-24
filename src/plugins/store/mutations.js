@@ -48,4 +48,7 @@ export default {
     setIdle(state, status){
         state.isIdle = status;
     },
+    setNotificationAllow(state, status){
+        state.notificationAllow = status;
+    },
 };

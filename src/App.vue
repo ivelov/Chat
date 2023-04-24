@@ -9,5 +9,11 @@
 
 export default {
   name: 'App',
+  mounted(){
+    this.$notification.requestPermission()
+      .then((result)=>{
+        this.$store.commit('setNotificationAllow', result === 'granted');
+      })
+  }
 }
 </script>

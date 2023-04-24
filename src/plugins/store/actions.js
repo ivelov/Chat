@@ -1,6 +1,7 @@
 import axios from "axios";
 import VueCookies from "vue-cookies";
 import Echo from '@ably/laravel-echo';
+import Vue from "vue";
 
 export default {
   //async
@@ -199,6 +200,10 @@ export default {
         if (data.userId === state.state.user.id) {
           return;
         }
+        if(!state.state.chats[chatId]){
+          console.error('New message to chat that not exist');
+          return;
+        }
 
         state.commit("addNewMessages", {
           messages: [{ message: data.message, fromYou: false }],
@@ -215,7 +220,15 @@ export default {
 
         //Send notification if user is idle
         if (state.getters.isIdle) {
-          console.log("notify");
+          if(state.state.notificationAllow){
+            Vue.notification.show(state.state.chats[chatId].name, {
+              body: data.message
+            }, {})
+          }
+
+          if (state.getters.getActiveChatIndex === chatId) {
+            state.commit("incrementUnreadCount", chatId);
+          }
         // Mark as read if user is not idle
         } else if (state.getters.getActiveChatIndex === chatId) {
           state.dispatch("markAsRead", chatId);

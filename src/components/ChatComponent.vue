@@ -120,10 +120,10 @@ export default {
       this.message = "";
     },
     handleUnIdleFun(){
-      if(!this.chat){
-        return;
+      if(this.chat && this.chat.unread_count > 0){
+        this.$store.dispatch('markAsRead', this.$store.getters.getActiveChatIndex);
+        this.$store.commit('resetUnreadCount', this.$store.getters.getActiveChatIndex);
       }
-      this.$store.commit('resetUnreadCount', this.$store.getters.getActiveChat);
     }
   },
   mixins:[IdleMixin]

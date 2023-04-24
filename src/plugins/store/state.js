@@ -7,4 +7,5 @@ export default {
     chats:{},
     activeChatIndex: null,
     isIdle: false,
+    notificationAllow: false,
 };
