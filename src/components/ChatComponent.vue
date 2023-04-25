@@ -37,8 +37,10 @@
             :key="index"
             :class="message.fromYou ? 'message-right' : ''"
             class="message mb-2"
-            v-html="message.message"
-          ></li>
+          >
+            <p class="is-size-7">{{ message.created_at }}</p>
+            <p v-html="message.message"></p>
+          </li>
         </ul>
       </div>
 
@@ -95,7 +97,7 @@ export default {
       return this.messagesSending > 0;
     },
   },
-  mounted(){
+  mounted() {
     this.handleUnIdle = this.handleUnIdleFun;
   },
   methods: {
@@ -119,14 +121,20 @@ export default {
       });
       this.message = "";
     },
-    handleUnIdleFun(){
-      if(this.chat && this.chat.unread_count > 0){
-        this.$store.dispatch('markAsRead', this.$store.getters.getActiveChatIndex);
-        this.$store.commit('resetUnreadCount', this.$store.getters.getActiveChatIndex);
+    handleUnIdleFun() {
+      if (this.chat && this.chat.unread_count > 0) {
+        this.$store.dispatch(
+          "markAsRead",
+          this.$store.getters.getActiveChatIndex
+        );
+        this.$store.commit(
+          "resetUnreadCount",
+          this.$store.getters.getActiveChatIndex
+        );
       }
-    }
+    },
   },
-  mixins:[IdleMixin]
+  mixins: [IdleMixin],
 };
 </script>
 

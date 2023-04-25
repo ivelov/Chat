@@ -3,7 +3,7 @@ export default {
   data: function () {
     return {
       idleSeconds: 0,
-      idleAfterSeconds: 60,
+      idleAfterSeconds: 10,
       timerId: 0,
       handleIdle() {},
       handleUnIdle() {},
@@ -21,8 +21,7 @@ export default {
   },
   mounted() {
     if (process.env.VUE_APP_API_URL) {
-      this.idleAfterSeconds = 5;
-      // this.idleAfterSeconds = process.env.VUE_APP_API_URL;
+      this.idleAfterSeconds = process.env.VUE_APP_API_URL;
     }
     document.addEventListener("mousemove", this.resetIdle);
     document.addEventListener("click", this.resetIdle);

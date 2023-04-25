@@ -61,7 +61,13 @@ function getChatCallback(state, chatId) {
     }
 
     state.commit("addNewMessages", {
-      messages: [{ message: data.message, fromYou: false }],
+      messages: [
+        {
+          message: data.message,
+          fromYou: false,
+          created_at: parseDate(new Date()),
+        },
+      ],
       chatId: chatId,
     });
     state.commit("setLastMessage", {
@@ -93,6 +99,14 @@ function getChatCallback(state, chatId) {
       state.dispatch("markAsRead", chatId);
     }
   };
+}
+
+function parseDate(date) {
+  let month = ('0'+date.getMonth()).slice(-2);
+  let day = ('0'+date.getDate()).slice(-2);
+  let hours = ('0'+date.getHours()).slice(-2);
+  let minutes = ('0'+date.getMinutes()).slice(-2);
+  return `${day}.${month}.${date.getFullYear()} ${hours}:${minutes}`;
 }
 
 export default {
@@ -211,7 +225,7 @@ export default {
 
           let chatInObject = {};
           chatInObject[response.data.id] = response.data;
-          state.dispatch('setListenersToChats', chatInObject);
+          state.dispatch("setListenersToChats", chatInObject);
 
           resolve(response.data);
         })
@@ -235,8 +249,15 @@ export default {
 
       get("/V1/api/chats/" + state.getters.getActiveChatIndex)
         .then((response) => {
-          state.commit("setChatMessages", response.data);
-          resolve(response.data);
+          let chat = response.data;
+          for (let i = 0; i < chat.messages.length; i++) {
+            chat.messages[i].created_at = parseDate(
+              new Date(chat.messages[i].created_at)
+            );
+          }
+
+          state.commit("setChatMessages", chat);
+          resolve(chat);
         })
         .catch((reason) => {
           reject(reason.response);
@@ -257,7 +278,13 @@ export default {
       post("/V1/api/chats/" + chatId, { message: message })
         .then(() => {
           state.commit("addNewMessages", {
-            messages: [{ message: message, fromYou: true }],
+            messages: [
+              {
+                message: message,
+                fromYou: true,
+                created_at: parseDate(new Date()),
+              },
+            ],
             chatId: chatId,
           });
           state.commit("setLastMessage", { message: message, chatId: chatId });
@@ -321,8 +348,8 @@ export default {
   },
   registerUserPrivateListener(state) {
     let userId = state.state.user.id;
-    if(!userId){
-      console.error('UserPrivateChannel: userId is null');
+    if (!userId) {
+      console.error("UserPrivateChannel: userId is null");
       return;
     }
 
@@ -340,7 +367,7 @@ export default {
 
       let chatInObject = {};
       chatInObject[chat.id] = chat;
-      state.dispatch('setListenersToChats', chatInObject);
+      state.dispatch("setListenersToChats", chatInObject);
     });
   },
   async toggleActiveChatMute(state) {
