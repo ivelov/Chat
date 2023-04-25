@@ -3,6 +3,9 @@ export default {
     return state.user;
   },
   getUserName(state){
+    if(!state.user){
+      return '';
+    }
     return state.user.nickname
       ? state.user.nickname
       : state.user.name;

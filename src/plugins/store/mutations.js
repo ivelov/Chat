@@ -11,10 +11,18 @@ export default {
         state.user = user;
     },
     setChats(state, chats) {
+        if(Array.isArray(chats)){
+            chats = Object.assign({}, chats);
+        }
         state.chats = chats;
     },
     setChat(state, chat) {
-        Vue.set(state.chats, chat.id, chat);
+        if(!state.chats){
+            state.chats = {};
+            state.chats[chat.id] = chat;
+        }else{
+            Vue.set(state.chats, chat.id, chat);
+        }
     },
     setChatMessages(state, chat) {
         Vue.set(state.chats[chat.id], 'messages', chat.messages);

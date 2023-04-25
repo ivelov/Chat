@@ -14,8 +14,11 @@ function post(url, data = {}) {
       .catch((reason) => {
         console.error(reason);
 
-        if(reason.response.status === 401 && router.currentRoute.path !== '/login'){
-          router.push('/login');
+        if (
+          reason.response.status === 401 &&
+          router.currentRoute.path !== "/login"
+        ) {
+          router.push("/login");
           router.go();
         }
         reject(reason);
@@ -33,13 +36,63 @@ function get(url) {
       .catch((reason) => {
         console.error(reason);
 
-        if(reason.response.status === 401 && router.currentRoute.path !== '/login'){
-          router.push('/login');
+        if (
+          reason.response.status === 401 &&
+          router.currentRoute.path !== "/login"
+        ) {
+          router.push("/login");
           router.go();
         }
         reject(reason);
       });
   });
+}
+
+function getChatCallback(state, chatId) {
+  return (data) => {
+    if (data.userId === state.state.user.id) {
+      return;
+    }
+
+    let chat = state.state.chats[chatId];
+    if (!chat) {
+      console.error("New message to chat that not exist");
+      return;
+    }
+
+    state.commit("addNewMessages", {
+      messages: [{ message: data.message, fromYou: false }],
+      chatId: chatId,
+    });
+    state.commit("setLastMessage", {
+      message: data.message,
+      chatId: chatId,
+    });
+
+    if (state.getters.getActiveChatIndex !== chatId) {
+      state.commit("incrementUnreadCount", chatId);
+    }
+
+    //Send notification if user is idle
+    if (state.getters.isIdle) {
+      if (state.state.notificationAllow && !chat.muted) {
+        Vue.notification.show(
+          chat.name,
+          {
+            body: data.message,
+          },
+          {}
+        );
+      }
+
+      if (state.getters.getActiveChatIndex === chatId) {
+        state.commit("incrementUnreadCount", chatId);
+      }
+      // Mark as read if user is not idle
+    } else if (state.getters.getActiveChatIndex === chatId) {
+      state.dispatch("markAsRead", chatId);
+    }
+  };
 }
 
 export default {
@@ -56,6 +109,7 @@ export default {
           state.commit("setUser", response.data.user);
 
           state.dispatch("registerEcho");
+          state.dispatch("registerUserPrivateListener");
 
           resolve(response.data);
         })
@@ -75,7 +129,7 @@ export default {
           state.commit("setUser", null);
           state.commit("setChats", {});
           state.commit("setActiveChat", null);
-        
+
           resolve(response.data);
         })
         .catch((reason) => {
@@ -95,6 +149,7 @@ export default {
           state.commit("setUser", response.data.user);
 
           state.dispatch("registerEcho");
+          state.dispatch("registerUserPrivateListener");
 
           resolve(response.data);
         })
@@ -108,6 +163,8 @@ export default {
       get("/V1/api/user")
         .then((response) => {
           state.commit("setUser", response.data);
+          state.dispatch("registerUserPrivateListener");
+
           resolve(response.data);
         })
         .catch(() => {
@@ -151,6 +208,11 @@ export default {
         .then((response) => {
           state.commit("setChat", response.data);
           state.commit("setActiveChat", response.data.id);
+
+          let chatInObject = {};
+          chatInObject[response.data.id] = response.data;
+          state.dispatch('setListenersToChats', chatInObject);
+
           resolve(response.data);
         })
         .catch((reason) => {
@@ -159,7 +221,6 @@ export default {
     });
   },
   async getActiveChatInfo(state) {
-    
     return new Promise((resolve, reject) => {
       if (!state.getters.getActiveChat) {
         console.error("Vuex active chat is null");
@@ -168,7 +229,7 @@ export default {
       }
       //If messages already loaded
       if (state.getters.getActiveChat.hasMore === false) {
-        reject();
+        resolve();
         return;
       }
 
@@ -228,57 +289,10 @@ export default {
     });
   },
   async setListenersToChats(state, chats) {
-    let getChatCallback = (chatId) => {
-      return (data) => {
-        if (data.userId === state.state.user.id) {
-          return;
-        }
-
-        let chat = state.state.chats[chatId];
-        if (!chat) {
-          console.error("New message to chat that not exist");
-          return;
-        }
-
-        state.commit("addNewMessages", {
-          messages: [{ message: data.message, fromYou: false }],
-          chatId: chatId,
-        });
-        state.commit("setLastMessage", {
-          message: data.message,
-          chatId: chatId,
-        });
-
-        if (state.getters.getActiveChatIndex !== chatId) {
-          state.commit("incrementUnreadCount", chatId);
-        }
-
-        //Send notification if user is idle
-        if (state.getters.isIdle) {
-          if (state.state.notificationAllow && !chat.muted) {
-            Vue.notification.show(
-              chat.name,
-              {
-                body: data.message,
-              },
-              {}
-            );
-          }
-
-          if (state.getters.getActiveChatIndex === chatId) {
-            state.commit("incrementUnreadCount", chatId);
-          }
-          // Mark as read if user is not idle
-        } else if (state.getters.getActiveChatIndex === chatId) {
-          state.dispatch("markAsRead", chatId);
-        }
-      };
-    };
-
     for (const key in chats) {
       window.Echo.private("chats." + key).listen(
         "NewMessageEvent",
-        getChatCallback(key)
+        getChatCallback(state, key)
       );
     }
   },
@@ -305,20 +319,44 @@ export default {
       disconnectedRetryTimeout: 15000, // Retry connect after 15 seconds when client gets disconnected
     });
   },
+  registerUserPrivateListener(state) {
+    let userId = state.state.user.id;
+    if(!userId){
+      console.error('UserPrivateChannel: userId is null');
+      return;
+    }
+
+    window.Echo.private("users." + userId).listen("NewChatEvent", (data) => {
+      let chat = {
+        id: data.chatId,
+        name: data.name,
+        unread_count: 0,
+        hasMore: false,
+        muted: 0,
+        messages: [],
+        avatar: data.avatar,
+      };
+      state.commit("setChat", chat);
+
+      let chatInObject = {};
+      chatInObject[chat.id] = chat;
+      state.dispatch('setListenersToChats', chatInObject);
+    });
+  },
   async toggleActiveChatMute(state) {
     return new Promise((resolve, reject) => {
       let chat = state.getters.getActiveChat;
-      if(!chat){
-        console.error('chat not found');
+      if (!chat) {
+        console.error("chat not found");
         reject();
         return;
       }
 
       let chatId = state.getters.getActiveChatIndex;
 
-      post(`/V1/api/chats/${chatId}/${chat.muted?'unmute':'mute'}`)
+      post(`/V1/api/chats/${chatId}/${chat.muted ? "unmute" : "mute"}`)
         .then(() => {
-          state.commit('setChatMuted', {chatId:chatId, muted:!chat.muted})
+          state.commit("setChatMuted", { chatId: chatId, muted: !chat.muted });
           resolve();
         })
         .catch((reason) => {

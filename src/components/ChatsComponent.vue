@@ -120,7 +120,7 @@ export default {
               close();
             })
             .catch((response) => {
-              if (response.data?.errors?.email) {
+              if (response?.data?.errors?.email) {
                 this.$buefy.notification.open({
                   message: response.data.errors.email,
                   type: "is-danger",
