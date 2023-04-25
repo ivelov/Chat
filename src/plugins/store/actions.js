@@ -1,6 +1,6 @@
 import axios from "axios";
 import VueCookies from "vue-cookies";
-import Echo from '@ably/laravel-echo';
+import Echo from "@ably/laravel-echo";
 import Vue from "vue";
 
 export default {
@@ -127,15 +127,19 @@ export default {
     });
   },
   async getActiveChatInfo(state) {
-    if (!state.getters.getActiveChat) {
-      console.error("Vuex active chat is null");
-      return;
-    }
-    //If messages already loaded
-    if (state.getters.getActiveChat.hasMore === false) {
-      return;
-    }
+    
     return new Promise((resolve, reject) => {
+      if (!state.getters.getActiveChat) {
+        console.error("Vuex active chat is null");
+        reject();
+        return;
+      }
+      //If messages already loaded
+      if (state.getters.getActiveChat.hasMore === false) {
+        reject();
+        return;
+      }
+
       axios
         .get("/V1/api/chats/" + state.getters.getActiveChatIndex)
         .then((response) => {
@@ -150,9 +154,9 @@ export default {
   async setActiveChat(state, index) {
     state.commit("setActiveChat", index);
     state.dispatch("getActiveChatInfo");
-    if(state.state.chats[index]?.unread_count > 0){
+    if (state.state.chats[index]?.unread_count > 0) {
       state.dispatch("markAsRead", index);
-      state.commit('resetUnreadCount', index);
+      state.commit("resetUnreadCount", index);
     }
   },
   async sendMessage(state, message) {
@@ -200,8 +204,10 @@ export default {
         if (data.userId === state.state.user.id) {
           return;
         }
-        if(!state.state.chats[chatId]){
-          console.error('New message to chat that not exist');
+
+        let chat = state.state.chats[chatId];
+        if (!chat) {
+          console.error("New message to chat that not exist");
           return;
         }
 
@@ -220,16 +226,20 @@ export default {
 
         //Send notification if user is idle
         if (state.getters.isIdle) {
-          if(state.state.notificationAllow){
-            Vue.notification.show(state.state.chats[chatId].name, {
-              body: data.message
-            }, {})
+          if (state.state.notificationAllow && !chat.muted) {
+            Vue.notification.show(
+              chat.name,
+              {
+                body: data.message,
+              },
+              {}
+            );
           }
 
           if (state.getters.getActiveChatIndex === chatId) {
             state.commit("incrementUnreadCount", chatId);
           }
-        // Mark as read if user is not idle
+          // Mark as read if user is not idle
         } else if (state.getters.getActiveChatIndex === chatId) {
           state.dispatch("markAsRead", chatId);
         }
@@ -257,12 +267,36 @@ export default {
   },
   registerEcho() {
     window.Echo = new Echo({
-      broadcaster: 'ably',
-      authEndpoint: '/V1/broadcasting/auth',
-      auth:{headers:{'authorization': "Bearer " + VueCookies.get("apiToken")}},
+      broadcaster: "ably",
+      authEndpoint: "/V1/broadcasting/auth",
+      auth: {
+        headers: { authorization: "Bearer " + VueCookies.get("apiToken") },
+      },
       echoMessages: true, // self-echo for published message is set to false internally.
       queueMessages: true, // default: true, maintains queue for messages to be sent.
       disconnectedRetryTimeout: 15000, // Retry connect after 15 seconds when client gets disconnected
-  });
+    });
+  },
+  async toggleActiveChatMute(state) {
+    return new Promise((resolve, reject) => {
+      let chat = state.getters.getActiveChat;
+      if(!chat){
+        console.error('chat not found');
+        reject();
+        return;
+      }
+
+      let chatId = state.getters.getActiveChatIndex;
+
+      axios
+        .post(`/V1/api/chats/${chatId}/${chat.muted?'unmute':'mute'}`)
+        .then(() => {
+          state.commit('setChatMuted', {chatId:chatId, muted:!chat.muted})
+          resolve();
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
   },
 };

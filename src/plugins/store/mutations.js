@@ -51,4 +51,7 @@ export default {
     setNotificationAllow(state, status){
         state.notificationAllow = status;
     },
+    setChatMuted(state, payload){
+        Vue.set(state.chats[payload.chatId], 'muted', payload.muted);
+    },
 };
