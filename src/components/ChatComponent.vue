@@ -8,7 +8,20 @@
       <div
         class="is-flex is-justify-content-space-between is-align-content-center px-3 py-1 h-50 is-flex-grow-0 has-text-white has-background-link-dark"
       >
-        <div class="my-auto">{{ chat.name }}</div>
+        <div class="is-flex">
+          <!-- Back btn -->
+          <b-button
+            @click="back"
+            class="is-primary my-auto mr-3 is-hidden-tablet"
+          >
+            <b-icon icon="arrow-left"> </b-icon>
+          </b-button>
+
+          <!-- Chat name -->
+          <div class="my-auto">{{ chat.name }}</div>
+        </div>
+
+        <!-- Mute btn -->
         <b-button
           @click="toggleMute"
           class="is-primary my-auto"
@@ -64,7 +77,7 @@
       </div>
     </div>
 
-    <!-- Select a chat -->
+    <!-- 'Select a chat' text -->
     <div
       v-else
       class="h-full is-flex is-align-content-center is-flex-direction-column"
@@ -132,6 +145,9 @@ export default {
           this.$store.getters.getActiveChatIndex
         );
       }
+    },
+    back() {
+      this.$emit('onBack');
     },
   },
   mixins: [IdleMixin],

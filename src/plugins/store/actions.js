@@ -391,4 +391,7 @@ export default {
         });
     });
   },
+  async resetActiveChat(state) {
+    state.commit('setActiveChat', null);
+  },
 };

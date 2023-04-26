@@ -1,8 +1,12 @@
 <template>
   <div>
     <div class="is-flex p-4 has-background-info-dark is-overlay">
-      <ChatsComponent class="left pr-4"></ChatsComponent>
-      <ChatComponent class="right"></ChatComponent>
+      <ChatsComponent v-if="!$store.getters.getActiveChat || windowWidth > 768" class="left pr-4 mx-auto"></ChatsComponent>
+      <ChatComponent
+        v-if="windowWidth > 768 || $store.getters.getActiveChat"
+        class="right"
+        @onBack="back"
+      ></ChatComponent>
     </div>
   </div>
 </template>
@@ -14,7 +18,25 @@ import ChatComponent from "../components/ChatComponent.vue";
 export default {
   name: "HomePage",
   data() {
-    return {};
+    return {
+      windowWidth: window.innerWidth,
+    };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.onResize);
+    })
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.onResize);
+  },
+  methods: {
+    onResize() {
+      this.windowWidth = window.innerWidth;
+    },
+    back() {
+      this.$store.dispatch("resetActiveChat");
+    },
   },
   components: { ChatsComponent, ChatComponent },
 };
