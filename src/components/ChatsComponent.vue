@@ -21,57 +21,48 @@
     <!-- Chat list -->
     <div class="is-flex-grow-1 overflow-y-auto">
       <ul class="mt-3 has-text-white chat-list">
-      <li
-        class="is-flex mb-3"
-        v-for="(chat, id) in $store.state.chats"
-        :key="id"
-        @click="selectChat(id)"
-      >
-        <!-- Avatar -->
-        <img
-          class="avatar"
-          :src="`${apiUrl}/${chat.avatar}`"
-          alt="chat avatar"
-        />
+        <li
+          class="is-flex mb-3"
+          v-for="(chat, id) in $store.state.chats"
+          :key="id"
+          @click="selectChat(id)"
+        >
+          <!-- Avatar -->
+          <img
+            class="avatar"
+            :src="`${apiUrl}/${chat.avatar}`"
+            alt="chat avatar"
+          />
 
-        <!-- Chat name -->
-        <div class="ml-3 w-full">
-          <p>
-            {{ chat.name }}
-          </p>
+          <!-- Chat name -->
+          <div class="ml-3 w-full">
+            <p>
+              {{ chat.name }}
+            </p>
 
-          <div
-            class="is-flex is-justify-content-space-between is-align-content-center is-size-7"
-          >
-            <div class="is-clipped my-auto">
-              <!-- Last message stripped -->
-              <span>
-                {{
-                  chat.last_message
-                    ? chat.last_message.length > 14
-                      ? chat.last_message.substring(0, 14) + "..."
-                      : chat.last_message
-                    : ""
-                }}
-              </span>
-            </div>
+            <div
+              class="is-flex is-justify-content-space-between is-align-content-center is-size-7"
+            >
+              <div class="is-clipped my-auto">
+                <!-- Last message stripped -->
+                <span>
+                  {{ chat.last_message }}
+                </span>
+              </div>
 
-            <!-- Unread count -->
-            <div class="unread" v-if="chat.unread_count > 0">
-              <div>
-                {{ chat.unread_count }}
+              <!-- Unread count -->
+              <div class="unread" v-if="chat.unread_count > 0">
+                <div>
+                  {{ chat.unread_count }}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
     </div>
-    
-    <b-modal
-      v-model="userPropertiesModal"
-      trap-focus
-    >
+
+    <b-modal v-model="userPropertiesModal" trap-focus>
       <UserActionsComponent></UserActionsComponent>
     </b-modal>
   </section>
@@ -141,6 +132,7 @@ export default {
     selectChat(id) {
       this.$store.dispatch("setActiveChat", id);
     },
+    
   },
   components: { UserActionsComponent },
 };
@@ -166,7 +158,7 @@ export default {
   display: table-cell;
   vertical-align: middle;
 }
-.overflow-y-auto{
+.overflow-y-auto {
   overflow-y: auto;
 }
 </style>

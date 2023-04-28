@@ -49,8 +49,8 @@ function get(url) {
 }
 
 function getChatCallback(state, chatId) {
-  return (data) => {
-    if (data.userId === state.state.user.id) {
+  return (message) => {
+    if (message.userId === state.state.user.id) {
       return;
     }
 
@@ -63,7 +63,7 @@ function getChatCallback(state, chatId) {
     state.commit("addNewMessages", {
       messages: [
         {
-          message: data.message,
+          ...message,
           fromYou: false,
           created_at: parseDate(new Date()),
         },
@@ -71,8 +71,9 @@ function getChatCallback(state, chatId) {
       chatId: chatId,
     });
     state.commit("setLastMessage", {
-      message: data.message,
+      message: message.message,
       chatId: chatId,
+      attachment_type: message.attachment_type,
     });
 
     if (state.getters.getActiveChatIndex !== chatId) {
@@ -82,10 +83,11 @@ function getChatCallback(state, chatId) {
     //Send notification if user is idle
     if (state.getters.isIdle) {
       if (state.state.notificationAllow && !chat.muted) {
+        let body = message.message ? message.message : message.attachment_type;
         Vue.notification.show(
           chat.name,
           {
-            body: data.message,
+            body: body,
           },
           {}
         );
@@ -102,10 +104,10 @@ function getChatCallback(state, chatId) {
 }
 
 function parseDate(date) {
-  let month = ('0'+date.getMonth()).slice(-2);
-  let day = ('0'+date.getDate()).slice(-2);
-  let hours = ('0'+date.getHours()).slice(-2);
-  let minutes = ('0'+date.getMinutes()).slice(-2);
+  let month = ("0" + date.getMonth()).slice(-2);
+  let day = ("0" + date.getDate()).slice(-2);
+  let hours = ("0" + date.getHours()).slice(-2);
+  let minutes = ("0" + date.getMinutes()).slice(-2);
   return `${day}.${month}.${date.getFullYear()} ${hours}:${minutes}`;
 }
 
@@ -207,8 +209,7 @@ export default {
       get("/V1/api/chats")
         .then((response) => {
           state.dispatch("setListenersToChats", response.data);
-
-          state.commit("setChats", response.data);
+          state.dispatch("setLastMessageToChats", response.data);
           resolve(response.data);
         })
         .catch(() => {
@@ -272,22 +273,42 @@ export default {
       state.commit("resetUnreadCount", index);
     }
   },
-  async sendMessage(state, message) {
-    let chatId = state.getters.getActiveChatIndex;
+  async sendMessage(state, payload) {
     return new Promise((resolve, reject) => {
-      post("/V1/api/chats/" + chatId, { message: message })
-        .then(() => {
+      let chatId = state.getters.getActiveChatIndex;
+
+      let data = new FormData();
+      data.append("message", payload.message);
+
+      //Add attachment
+      let attachment_type = null;
+      if (payload.attachment) {
+        data.append("attachment", payload.attachment);
+
+        if (payload.attachment.type.indexOf("image") !== -1) {
+          attachment_type = "image";
+        } else if (payload.attachment.type.indexOf("video") !== -1) {
+          attachment_type = "video";
+        } else {
+          console.error("unexpected attachment type");
+          reject("unexpected type");
+          return;
+        }
+        data.append("attachment_type", attachment_type);
+      }
+
+      post("/V1/api/chats/" + chatId, data)
+        .then((response) => {
           state.commit("addNewMessages", {
             messages: [
               {
-                message: message,
                 fromYou: true,
-                created_at: parseDate(new Date()),
+                ...response.data,
               },
             ],
             chatId: chatId,
           });
-          state.commit("setLastMessage", { message: message, chatId: chatId });
+          // state.commit("setLastMessage", response.data);
           resolve();
         })
         .catch((reason) => {
@@ -392,6 +413,26 @@ export default {
     });
   },
   async resetActiveChat(state) {
-    state.commit('setActiveChat', null);
+    state.commit("setActiveChat", null);
+  },
+  async setLastMessageToChats(state, chats) {
+    for (const key in chats) {
+      let message = chats[key].last_message?.message;
+
+      if (!message) {
+        if (!chats[key].last_message?.attachment) {
+          chats[key].last_message = "";
+          continue;
+        } else {
+          chats[key].last_message = chats[key].last_message.attachment_type;
+          continue;
+        }
+      }
+
+      chats[key].last_message =
+        message.length > 14 ? message.substring(0, 14) + "..." : message;
+    }
+
+    state.commit("setChats", chats);
   },
 };

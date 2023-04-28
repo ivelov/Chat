@@ -20,8 +20,8 @@ export default {
     }
   },
   mounted() {
-    if (process.env.VUE_APP_API_URL) {
-      this.idleAfterSeconds = process.env.VUE_APP_API_URL;
+    if (process.env.VUE_APP_IDLE_AFTER_SECONDS) {
+      this.idleAfterSeconds = process.env.VUE_APP_IDLE_AFTER_SECONDS;
     }
     document.addEventListener("mousemove", this.resetIdle);
     document.addEventListener("click", this.resetIdle);

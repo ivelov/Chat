@@ -53,8 +53,36 @@
           >
             <p class="is-size-7">{{ message.created_at }}</p>
             <p v-html="message.message"></p>
+            <img
+              v-if="message.attachment_type === 'image'"
+              :src="`${apiUrl}/${message.attachment}`"
+              alt="attachment"
+            />
+            <video
+              v-if="message.attachment_type === 'video'"
+              :src="`${apiUrl}/${message.attachment}`"
+              controls
+              class="h-max-500"
+            >
+              Video error
+            </video>
           </li>
         </ul>
+      </div>
+
+      <div
+        v-if="attachment"
+        class="has-background-light has-text-centered is-flex px-1"
+      >
+        <p class="is-flex-grow-1">{{ attachment.name }}</p>
+        <div @click="removeAttachment">
+          <b-icon
+            icon="close-circle-outline my-auto"
+            size="is-small"
+            class="is-clickable"
+          >
+          </b-icon>
+        </div>
       </div>
 
       <!-- Input field -->
@@ -69,6 +97,9 @@
             custom-class="h-50 resize-none is-clipped"
             type="textarea"
             rows="1"
+            icon="plus-circle-outline"
+            icon-clickable
+            @icon-click="addAttachment"
             icon-right-clickable
             icon-right="send-circle"
             @icon-right-click="sendMessage"
@@ -86,6 +117,27 @@
         Select a chat
       </p>
     </div>
+
+    <!-- Attachment modal -->
+    <b-modal v-model="attachmentModal" trap-focus>
+      <div class="has-background-light w-max p-3 border-3 mx-auto">
+        <b-upload
+          v-model="attachment"
+          drag-drop
+          accept=".png,.jpg,.jpeg,.mp4"
+          @input="checkSize"
+        >
+          <section class="section">
+            <div class="content has-text-centered">
+              <p>
+                <b-icon icon="upload" size="is-large"> </b-icon>
+              </p>
+              <p>Drop your file here or click to upload</p>
+            </div>
+          </section>
+        </b-upload>
+      </div>
+    </b-modal>
   </section>
 </template>
 
@@ -97,6 +149,10 @@ export default {
       muteLoading: false,
       message: "",
       messagesSending: 0,
+      attachment: null,
+      attachmentModal: false,
+      fileMaxSize: 8000000,
+      apiUrl: process.env.VUE_APP_API_URL,
     };
   },
   computed: {
@@ -112,6 +168,9 @@ export default {
   },
   mounted() {
     this.handleUnIdle = this.handleUnIdleFun;
+    if (process.env.VUE_APP_FILE_MAX_SIZE) {
+      this.fileMaxSize = process.env.VUE_APP_FILE_MAX_SIZE;
+    }
   },
   methods: {
     toggleMute() {
@@ -125,14 +184,34 @@ export default {
     },
     sendMessage() {
       let message = this.message.trim();
-      if (message.length === 0) {
+      if (message.length === 0 && !this.attachment) {
         return;
       }
+
       this.messagesSending++;
-      this.$store.dispatch("sendMessage", message).finally(() => {
-        this.messagesSending--;
-      });
+      this.$store
+        .dispatch("sendMessage", {
+          message: message,
+          attachment: this.attachment,
+        })
+        .catch((response) => {
+          if (response?.status === 500) {
+            this.$buefy.notification.open({
+              message: "An internal error occured",
+              type: "is-danger",
+            });
+          }else{
+            console.log(response);
+          }
+        })
+        .finally(() => {
+          this.messagesSending--;
+        });
+
       this.message = "";
+      this.$nextTick(() => {
+        this.attachment = null;
+      });
     },
     handleUnIdleFun() {
       if (this.chat && this.chat.unread_count > 0) {
@@ -147,7 +226,24 @@ export default {
       }
     },
     back() {
-      this.$emit('onBack');
+      this.$emit("onBack");
+    },
+    addAttachment() {
+      this.attachmentModal = true;
+    },
+    checkSize(file) {
+      if (file.size > this.fileMaxSize) {
+        this.attachment = null;
+        this.$buefy.notification.open({
+          message: "Maximum file size is 8Mb",
+          type: "is-danger",
+        });
+      } else {
+        this.attachmentModal = false;
+      }
+    },
+    removeAttachment() {
+      this.attachment = null;
     },
   },
   mixins: [IdleMixin],
@@ -190,6 +286,15 @@ export default {
 }
 .loading {
   background-color: darkgray;
+}
+.w-max {
+  width: max-content;
+}
+.h-max-500 {
+  max-height: 500px;
+}
+.border-3 {
+  border-radius: 15px;
 }
 </style>
 
