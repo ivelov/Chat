@@ -56,7 +56,7 @@ function getChatCallback(state, chatId) {
 
     let chat = state.state.chats[chatId];
     if (!chat) {
-      console.error("New message to chat that not exist");
+      console.error("New message to chat that do not exist");
       return;
     }
 
@@ -100,6 +100,26 @@ function getChatCallback(state, chatId) {
     } else if (state.getters.getActiveChatIndex === chatId) {
       state.dispatch("markAsRead", chatId);
     }
+  };
+}
+
+function getMessageUpdateCallback(state, chatId) {
+  return (message) => {
+    if (message.userId === state.state.user.id) {
+      return;
+    }
+
+    let chat = state.state.chats[chatId];
+    if (!chat) {
+      console.error("Update message in chat that do not exist");
+      return;
+    }
+
+    state.commit("updateMessage", {
+      messageId:message.id,
+      message: message.message,
+      chatId: chatId,
+    });
   };
 }
 
@@ -341,6 +361,9 @@ export default {
       window.Echo.private("chats." + key).listen(
         "NewMessageEvent",
         getChatCallback(state, key)
+      ).listen(
+        "MessageUpdateEvent",
+        getMessageUpdateCallback(state, key)
       );
     }
   },
