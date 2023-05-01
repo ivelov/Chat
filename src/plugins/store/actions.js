@@ -123,6 +123,25 @@ function getMessageUpdateCallback(state, chatId) {
   };
 }
 
+function getMessageDeleteCallback(state, chatId) {
+  return (message) => {
+    if (message.userId === state.state.user.id) {
+      return;
+    }
+
+    let chat = state.state.chats[chatId];
+    if (!chat) {
+      console.error("Delete message in chat that do not exist");
+      return;
+    }
+
+    state.commit("deleteMessage", {
+      messageId:message.id,
+      chatId: chatId,
+    });
+  };
+}
+
 function parseDate(date) {
   let month = ("0" + date.getMonth()).slice(-2);
   let day = ("0" + date.getDate()).slice(-2);
@@ -319,16 +338,22 @@ export default {
 
       post("/V1/api/chats/" + chatId, data)
         .then((response) => {
+          let message = response.data;
+          message.created_at = parseDate(
+            new Date(message.created_at)
+          );
+          
           state.commit("addNewMessages", {
             messages: [
               {
                 fromYou: true,
-                ...response.data,
+                ...message,
               },
             ],
             chatId: chatId,
           });
-          // state.commit("setLastMessage", response.data);
+
+          state.commit("setLastMessage", message);
           resolve();
         })
         .catch((reason) => {
@@ -364,6 +389,9 @@ export default {
       ).listen(
         "MessageUpdateEvent",
         getMessageUpdateCallback(state, key)
+      ).listen(
+        "MessageDeleteEvent",
+        getMessageDeleteCallback(state, key)
       );
     }
   },

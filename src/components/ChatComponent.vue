@@ -35,8 +35,7 @@
       <!-- Messages -->
       <div
         class="is-flex-grow-1 has-background-color-dodger overflow-y-scroll-hidden py-5 px-2"
-        :v-chat-scroll="{enabled: autoScroll}"
-        @v-chat-scroll-top-reached="loadMore"
+        v-chat-scroll
       >
         <ul class="is-flex is-flex-direction-column-reverse">
           <li
@@ -47,8 +46,8 @@
           </li>
 
           <li
-            v-for="(message, index) in messages"
-            :key="index"
+            v-for="message in messages"
+            :key="message.id"
             :class="message.fromYou ? 'message-right' : ''"
           >
           <MessageComponent :message-init="message" @edit="scrollToMessage"></MessageComponent>
