@@ -439,7 +439,7 @@ export default {
     return new Promise((resolve, reject) => {
       let chatId = state.getters.getActiveChatIndex;
       if (!messageId || !chatId) {
-        console.error("message id is invalid");
+        console.error("delete message invalid params");
         reject();
         return;
       }
@@ -447,6 +447,25 @@ export default {
       post(`/V1/api/messages/${messageId}/delete`)
         .then(() => {
           state.commit("deleteMessage", { chatId: chatId, messageId: messageId });
+          resolve();
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
+  },
+  async saveMessage(state, payload) {
+    return new Promise((resolve, reject) => {
+      let chatId = state.getters.getActiveChatIndex;
+      if (!payload?.messageId || !chatId || !payload?.message) {
+        console.error("save message invalid params");
+        reject();
+        return;
+      }
+
+      post(`/V1/api/messages/${payload.messageId}`, {message: payload.message})
+        .then(() => {
+          state.commit("updateMessage", { chatId: chatId, messageId: payload.messageId, message: payload.message });
           resolve();
         })
         .catch((reason) => {

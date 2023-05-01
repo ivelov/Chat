@@ -1,20 +1,57 @@
 <template>
-  <article>
-    <b-tooltip type="is-light" :triggers="['contextmenu']" :position="message.fromYou ? 'is-left' : 'is-right'" :auto-close="['outside', 'escape', 'inside']">
+  <article v-if="message">
+    <b-tooltip
+      type="is-light"
+      :triggers="['contextmenu']"
+      :position="message.fromYou ? 'is-left' : 'is-right'"
+      :auto-close="['outside', 'escape', 'inside']"
+    >
       <template v-slot:content>
         <ul>
           <li>
-            <b-button type="is-text" class="w-100">Edit</b-button>
+            <b-button type="is-text" class="w-100" @click="editMessage"
+              >Edit</b-button
+            >
           </li>
           <li>
-            <b-button type="is-text" class="w-100" @click="deleteMessage">Delete</b-button>
+            <b-button type="is-text" class="w-100" @click="deleteMessage"
+              >Delete</b-button
+            >
           </li>
         </ul>
       </template>
 
       <div :class="message.fromYou ? 'message-right' : ''" class="message mb-2">
         <p class="is-size-7">{{ message.created_at }}</p>
-        <p v-html="message.message"></p>
+
+        <!-- On edit input -->
+        <div v-if="message.editing" class="h-50 is-flex-grow-0">
+          <b-field>
+            <b-input
+              v-model="message.message"
+              class="child-h-full"
+              custom-class="h-50 resize-none is-clipped"
+              type="textarea"
+              rows="1"
+            ></b-input>
+          </b-field>
+        </div>
+
+        <!-- Save and cancel btns -->
+        <div
+          class="is-flex is-justify-content-space-between mb-3"
+          v-if="message.editing"
+        >
+          <b-button type="is-success" size="is-small" @click="saveMessage"
+            >Save</b-button
+          >
+          <b-button type="is-danger is-light" size="is-small" @click="cancelEditing"
+            >Cancel</b-button
+          >
+        </div>
+
+        <!-- Message with attachments -->
+        <p v-if="!message.editing" v-html="message.message"></p>
         <img
           v-if="message.attachment_type === 'image'"
           :src="`${apiUrl}/${message.attachment}`"
@@ -38,18 +75,38 @@ export default {
   data() {
     return {
       apiUrl: process.env.VUE_APP_API_URL,
+      message: null,
     };
   },
   props: {
-    message: {
+    messageInit: {
       type: Object,
       required: true,
     },
   },
+  mounted() {
+    this.message = this.messageInit;
+  },
   methods: {
-    deleteMessage(){
-      this.$store.dispatch('deleteMessage', this.message.id);
-    }
+    deleteMessage() {
+      this.$store.dispatch("deleteMessage", this.message.id);
+    },
+    editMessage() {
+      this.message.oldMessage = this.message.message;
+      this.$set(this.message, 'editing', true);
+      this.$emit('edit', this.message.id);
+    },
+    cancelEditing() {
+      this.message.message = this.message.oldMessage;
+      this.$set(this.message, 'editing', false);
+    },
+    saveMessage() {
+      this.$set(this.message, 'editing', false);
+      this.$store.dispatch("saveMessage", {
+        messageId: this.message.id,
+        message: this.message.message,
+      });
+    },
   },
 };
 </script>
@@ -76,7 +133,7 @@ export default {
 .h-max-500 {
   max-height: 500px;
 }
-.w-100{
+.w-100 {
   width: 100%;
 }
 </style>

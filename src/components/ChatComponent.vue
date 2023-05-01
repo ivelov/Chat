@@ -50,7 +50,7 @@
             :key="index"
             :class="message.fromYou ? 'message-right' : ''"
           >
-          <MessageComponent :message="message"></MessageComponent>
+          <MessageComponent :message-init="message" :ref="'message-'+message.id" @edit="scrollToMessage"></MessageComponent>
           </li>
         </ul>
       </div>
@@ -231,6 +231,13 @@ export default {
     removeAttachment() {
       this.attachment = null;
     },
+    scrollToMessage(messageId){
+      let ref = this.$refs['message-'+messageId];
+      if(!ref){
+        return;
+      }
+      ref[0].$el.scrollIntoView();
+    }
   },
   components:{MessageComponent},
   mixins: [IdleMixin],

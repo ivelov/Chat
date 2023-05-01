@@ -88,4 +88,12 @@ export default {
       }
     }
   },
+  updateMessage(state, payload) {
+    for (let i = 0; i < state.chats[payload.chatId].messages.length; i++) {
+      if(state.chats[payload.chatId].messages[i].id === payload.messageId){
+        state.chats[payload.chatId].messages[i].message = payload.message;
+        return;
+      }
+    }
+  },
 };
