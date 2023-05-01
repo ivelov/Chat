@@ -435,4 +435,23 @@ export default {
 
     state.commit("setChats", chats);
   },
+  async deleteMessage(state, messageId) {
+    return new Promise((resolve, reject) => {
+      let chatId = state.getters.getActiveChatIndex;
+      if (!messageId || !chatId) {
+        console.error("message id is invalid");
+        reject();
+        return;
+      }
+
+      post(`/V1/api/messages/${messageId}/delete`)
+        .then(() => {
+          state.commit("deleteMessage", { chatId: chatId, messageId: messageId });
+          resolve();
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
+  },
 };

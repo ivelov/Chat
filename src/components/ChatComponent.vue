@@ -49,23 +49,8 @@
             v-for="(message, index) in messages"
             :key="index"
             :class="message.fromYou ? 'message-right' : ''"
-            class="message mb-2"
           >
-            <p class="is-size-7">{{ message.created_at }}</p>
-            <p v-html="message.message"></p>
-            <img
-              v-if="message.attachment_type === 'image'"
-              :src="`${apiUrl}/${message.attachment}`"
-              alt="attachment"
-            />
-            <video
-              v-if="message.attachment_type === 'video'"
-              :src="`${apiUrl}/${message.attachment}`"
-              controls
-              class="h-max-500"
-            >
-              Video error
-            </video>
+          <MessageComponent :message="message"></MessageComponent>
           </li>
         </ul>
       </div>
@@ -94,7 +79,7 @@
           <b-input
             v-model="message"
             class="child-h-full"
-            custom-class="h-50 resize-none is-clipped"
+            custom-class="h-50 resize-none is-clipped pl-40"
             type="textarea"
             rows="1"
             icon="plus-circle-outline"
@@ -143,6 +128,7 @@
 
 <script>
 import IdleMixin from "../mixins/IdleMixin.vue";
+import MessageComponent from "./MessageComponent.vue";
 export default {
   data() {
     return {
@@ -246,6 +232,7 @@ export default {
       this.attachment = null;
     },
   },
+  components:{MessageComponent},
   mixins: [IdleMixin],
 };
 </script>
@@ -290,9 +277,6 @@ export default {
 .w-max {
   width: max-content;
 }
-.h-max-500 {
-  max-height: 500px;
-}
 .border-3 {
   border-radius: 15px;
 }
@@ -307,5 +291,8 @@ export default {
 }
 .child-h-full span {
   height: 100% !important;
+}
+.pl-40{
+  padding-left: 40px;
 }
 </style>
