@@ -35,7 +35,8 @@
       <!-- Messages -->
       <div
         class="is-flex-grow-1 has-background-color-dodger overflow-y-scroll-hidden py-5 px-2"
-        v-chat-scroll
+        :v-chat-scroll="{enabled: autoScroll}"
+        @v-chat-scroll-top-reached="loadMore"
       >
         <ul class="is-flex is-flex-direction-column-reverse">
           <li
@@ -50,7 +51,7 @@
             :key="index"
             :class="message.fromYou ? 'message-right' : ''"
           >
-          <MessageComponent :message-init="message" :ref="'message-'+message.id" @edit="scrollToMessage"></MessageComponent>
+          <MessageComponent :message-init="message" @edit="scrollToMessage"></MessageComponent>
           </li>
         </ul>
       </div>
@@ -139,6 +140,7 @@ export default {
       attachmentModal: false,
       fileMaxSize: 8000000,
       apiUrl: process.env.VUE_APP_API_URL,
+      autoScroll: true
     };
   },
   computed: {
@@ -231,13 +233,13 @@ export default {
     removeAttachment() {
       this.attachment = null;
     },
-    scrollToMessage(messageId){
-      let ref = this.$refs['message-'+messageId];
-      if(!ref){
-        return;
-      }
-      ref[0].$el.scrollIntoView();
-    }
+    scrollToMessage(){
+      this.autoScroll = false;
+      this.$nextTick(()=>{
+        this.autoScroll = true;
+      })
+    },
+    loadMore(){},
   },
   components:{MessageComponent},
   mixins: [IdleMixin],
