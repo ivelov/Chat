@@ -39,7 +39,11 @@ export default {
       state.chats[payload.chatId].messages = [];
     }
 
-    state.chats[payload.chatId].messages.unshift(...payload.messages);
+    if (payload.toBack) {
+      state.chats[payload.chatId].messages.push(...payload.messages);
+    } else {
+      state.chats[payload.chatId].messages.unshift(...payload.messages);
+    }
   },
   setLastMessage(state, message) {
     let newMessage = message?.message;
@@ -82,7 +86,7 @@ export default {
   },
   deleteMessage(state, payload) {
     for (let i = 0; i < state.chats[payload.chatId].messages.length; i++) {
-      if(state.chats[payload.chatId].messages[i].id === payload.messageId){
+      if (state.chats[payload.chatId].messages[i].id === payload.messageId) {
         state.chats[payload.chatId].messages.splice(i, 1);
         return;
       }
@@ -90,10 +94,13 @@ export default {
   },
   updateMessage(state, payload) {
     for (let i = 0; i < state.chats[payload.chatId].messages.length; i++) {
-      if(state.chats[payload.chatId].messages[i].id === payload.messageId){
+      if (state.chats[payload.chatId].messages[i].id === payload.messageId) {
         state.chats[payload.chatId].messages[i].message = payload.message;
         return;
       }
     }
+  },
+  setChatHasMore(state, payload) {
+    Vue.set(state.chats[payload.chatId], "hasMore", payload.hasMore);
   },
 };

@@ -1,11 +1,12 @@
 <template>
   <section class="h-full has-background-link-dark">
     <div
-      v-if="chat"
       class="is-flex is-flex-direction-column is-justify-content-space-between h-full has-background-color-dodger"
+      :class="chat?'':'is-hidden'"
     >
       <!-- Header -->
       <div
+        v-if="chat"
         class="is-flex is-justify-content-space-between is-align-content-center px-3 py-1 h-50 is-flex-grow-0 has-text-white has-background-link-dark"
       >
         <div class="is-flex">
@@ -35,9 +36,10 @@
       <!-- Messages -->
       <div
         class="is-flex-grow-1 has-background-color-dodger overflow-y-scroll-hidden py-5 px-2"
-        v-chat-scroll
+        v-chat-scroll="{always: false, enabled: autoScroll}"
+        ref="chat"
       >
-        <ul class="is-flex is-flex-direction-column-reverse">
+        <ul class="is-flex is-flex-direction-column-reverse" ref="chatInner" v-if="chat">
           <li
             v-if="messagesLoading"
             class="message message-right mb-2 is-relative h-34 loading"
@@ -95,7 +97,7 @@
 
     <!-- 'Select a chat' text -->
     <div
-      v-else
+      v-if="!chat"
       class="h-full is-flex is-align-content-center is-flex-direction-column"
     >
       <p class="my-auto is-size-2 has-text-white has-text-centered">
@@ -139,7 +141,9 @@ export default {
       attachmentModal: false,
       fileMaxSize: 8000000,
       apiUrl: process.env.VUE_APP_API_URL,
-      autoScroll: true
+      autoScroll: true,
+      chatScrollTop: 0,
+      newLoading: false,
     };
   },
   computed: {
@@ -158,6 +162,14 @@ export default {
     if (process.env.VUE_APP_FILE_MAX_SIZE) {
       this.fileMaxSize = process.env.VUE_APP_FILE_MAX_SIZE;
     }
+
+    const el = this.$refs.chat;
+    el.addEventListener('scroll', () => {
+        this.chatScrollTop = el.scrollTop;
+        if(this.chatScrollTop < 100){
+          this.loadMore();
+        }
+    });
   },
   methods: {
     toggleMute() {
@@ -238,7 +250,21 @@ export default {
         this.autoScroll = true;
       })
     },
-    loadMore(){},
+    loadMore(){
+      if(this.newLoading || this.chat.hasMore === false){
+        return;
+      }
+      let oldHeight = this.$refs.chatInner.clientHeight;
+      this.autoScroll = false;
+      this.newLoading = true;
+      this.$store.dispatch('loadMoreMessages').finally(()=>{
+        this.newLoading = false;
+        this.autoScroll = true;
+        this.$nextTick(()=>{
+          this.$refs.chat.scrollTop = this.$refs.chatInner.clientHeight - oldHeight;
+        })
+      });
+    },
   },
   components:{MessageComponent},
   mixins: [IdleMixin],

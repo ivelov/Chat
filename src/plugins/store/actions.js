@@ -116,7 +116,7 @@ function getMessageUpdateCallback(state, chatId) {
     }
 
     state.commit("updateMessage", {
-      messageId:message.id,
+      messageId: message.id,
       message: message.message,
       chatId: chatId,
     });
@@ -136,7 +136,7 @@ function getMessageDeleteCallback(state, chatId) {
     }
 
     state.commit("deleteMessage", {
-      messageId:message.id,
+      messageId: message.id,
       chatId: chatId,
     });
   };
@@ -339,10 +339,8 @@ export default {
       post("/V1/api/chats/" + chatId, data)
         .then((response) => {
           let message = response.data;
-          message.created_at = parseDate(
-            new Date(message.created_at)
-          );
-          
+          message.created_at = parseDate(new Date(message.created_at));
+
           state.commit("addNewMessages", {
             messages: [
               {
@@ -383,16 +381,10 @@ export default {
   },
   async setListenersToChats(state, chats) {
     for (const key in chats) {
-      window.Echo.private("chats." + key).listen(
-        "NewMessageEvent",
-        getChatCallback(state, key)
-      ).listen(
-        "MessageUpdateEvent",
-        getMessageUpdateCallback(state, key)
-      ).listen(
-        "MessageDeleteEvent",
-        getMessageDeleteCallback(state, key)
-      );
+      window.Echo.private("chats." + key)
+        .listen("NewMessageEvent", getChatCallback(state, key))
+        .listen("MessageUpdateEvent", getMessageUpdateCallback(state, key))
+        .listen("MessageDeleteEvent", getMessageDeleteCallback(state, key));
     }
   },
   async markAsRead(state, chatId) {
@@ -497,7 +489,10 @@ export default {
 
       post(`/V1/api/messages/${messageId}/delete`)
         .then(() => {
-          state.commit("deleteMessage", { chatId: chatId, messageId: messageId });
+          state.commit("deleteMessage", {
+            chatId: chatId,
+            messageId: messageId,
+          });
           resolve();
         })
         .catch((reason) => {
@@ -514,9 +509,45 @@ export default {
         return;
       }
 
-      post(`/V1/api/messages/${payload.messageId}`, {message: payload.message})
+      post(`/V1/api/messages/${payload.messageId}`, {
+        message: payload.message,
+      })
         .then(() => {
-          state.commit("updateMessage", { chatId: chatId, messageId: payload.messageId, message: payload.message });
+          state.commit("updateMessage", {
+            chatId: chatId,
+            messageId: payload.messageId,
+            message: payload.message,
+          });
+          resolve();
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
+  },
+  async loadMoreMessages(state) {
+    return new Promise((resolve, reject) => {
+      let chatId = state.getters.getActiveChatIndex;
+      if (!chatId) {
+        reject();
+        return;
+      }
+
+      let offset =
+        state.state.chats[state.getters.getActiveChatIndex].messages.length;
+      get(`/V1/api/chats/${chatId}?offset=${offset}`)
+        .then((response) => {
+          let chat = response.data;
+          
+          state.commit("addNewMessages", {
+            chatId: chat.id,
+            messages: chat.messages,
+            toBack: true,
+          });
+          state.commit("setChatHasMore", {
+            chatId: chat.id,
+            hasMore: chat.hasMore,
+          });
           resolve();
         })
         .catch((reason) => {
