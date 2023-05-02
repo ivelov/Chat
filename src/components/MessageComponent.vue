@@ -2,7 +2,7 @@
   <article v-if="message">
     <b-tooltip
       type="is-light"
-      :triggers="['contextmenu']"
+      :triggers="message.fromYou ? ['contextmenu'] : []"
       :position="message.fromYou ? 'is-left' : 'is-right'"
       :auto-close="['outside', 'escape', 'inside']"
     >
@@ -45,7 +45,10 @@
           <b-button type="is-success" size="is-small" @click="saveMessage"
             >Save</b-button
           >
-          <b-button type="is-danger is-light" size="is-small" @click="cancelEditing"
+          <b-button
+            type="is-danger is-light"
+            size="is-small"
+            @click="cancelEditing"
             >Cancel</b-button
           >
         </div>
@@ -93,15 +96,15 @@ export default {
     },
     editMessage() {
       this.message.oldMessage = this.message.message;
-      this.$set(this.message, 'editing', true);
-      this.$emit('edit', this.message.id);
+      this.$set(this.message, "editing", true);
+      this.$emit("edit", this.message.id);
     },
     cancelEditing() {
       this.message.message = this.message.oldMessage;
-      this.$set(this.message, 'editing', false);
+      this.$set(this.message, "editing", false);
     },
     saveMessage() {
-      this.$set(this.message, 'editing', false);
+      this.$set(this.message, "editing", false);
       this.$store.dispatch("saveMessage", {
         messageId: this.message.id,
         message: this.message.message,
