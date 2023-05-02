@@ -114,6 +114,7 @@ export default {
 <style scoped>
 .message {
   max-width: 90%;
+  min-width: 120px;
   background-color: aqua;
   padding: 5px;
   padding-left: 15px;
