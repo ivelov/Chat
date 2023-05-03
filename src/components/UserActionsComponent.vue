@@ -73,6 +73,7 @@
           class="file-label"
           accept=".png,.jpg,.jpeg"
           @blur="errors.photo = null"
+          @input="checkSize"
         >
           <span class="file-cta">
             <b-icon class="file-icon" icon="upload"></b-icon>
@@ -105,7 +106,8 @@ export default {
       logoutLoading: false,
       userData: {},
       loading: false,
-      errors: {}
+      errors: {},
+      fileMaxSize: 2000000,
     };
   },
   computed: {
@@ -156,6 +158,15 @@ export default {
       .finally(()=>{
         this.loading = false;
       })
+    },
+    checkSize(file) {
+      if (file.size > this.fileMaxSize) {
+        this.userData.photo = null;
+        this.$buefy.notification.open({
+          message: "Maximum photo size is 2Mb",
+          type: "is-danger",
+        });
+      }
     },
   },
 };
