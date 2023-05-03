@@ -116,8 +116,8 @@ export default {
   mounted() {
     this.userData = {
       name: this.$store.state.user.name,
-      nickname: this.$store.state.nickname,
-      lang: this.$store.state.lang,
+      nickname: this.$store.state.user.nickname,
+      lang: this.$store.state.user.lang,
       photo: null,
     };
   },

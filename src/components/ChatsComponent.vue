@@ -15,7 +15,7 @@
 
     <!-- New chat btn -->
     <div class="is-flex is-align-content-center mt-5">
-      <b-button @click="newChat" class="is-primary"> New chat </b-button>
+      <b-button @click="addChatModal = true" class="is-primary"> New chat </b-button>
     </div>
 
     <!-- Chat list -->
@@ -62,6 +62,10 @@
       </ul>
     </div>
 
+    <b-modal v-model="addChatModal" trap-focus>
+      <UserSearchComponent @close="addChatModal = false"></UserSearchComponent>
+    </b-modal>
+
     <b-modal v-model="userPropertiesModal" trap-focus>
       <UserActionsComponent></UserActionsComponent>
     </b-modal>
@@ -70,12 +74,13 @@
 
 <script>
 import UserActionsComponent from "../components/UserActionsComponent.vue";
+import UserSearchComponent from "../components/UserSearchComponent.vue";
 export default {
   data() {
     return {
       apiUrl: process.env.VUE_APP_API_URL,
-      addChatLoading: false,
       userPropertiesModal: false,
+      addChatModal: false,
     };
   },
   computed: {
@@ -90,51 +95,12 @@ export default {
     photoClick() {
       this.userPropertiesModal = true;
     },
-    newChat() {
-      this.$buefy.dialog.prompt({
-        message: "Enter user email",
-        inputAttrs: {
-          type: "email",
-        },
-        confirmText: "Add",
-        trapFocus: true,
-        closeOnConfirm: false,
-        onConfirm: (email, { close }) => {
-          if (this.addChatLoading) {
-            return;
-          }
-          this.addChatLoading = true;
-
-          this.$store
-            .dispatch("addChat", email)
-            .then(() => {
-              close();
-            })
-            .catch((response) => {
-              if (response?.data?.errors?.email) {
-                this.$buefy.notification.open({
-                  message: response.data.errors.email,
-                  type: "is-danger",
-                });
-              } else {
-                this.$buefy.notification.open({
-                  message: "An error occurred!",
-                  type: "is-danger",
-                });
-              }
-            })
-            .finally(() => {
-              this.addChatLoading = false;
-            });
-        },
-      });
-    },
     selectChat(id) {
       this.$store.dispatch("setActiveChat", id);
     },
     
   },
-  components: { UserActionsComponent },
+  components: { UserActionsComponent, UserSearchComponent },
 };
 </script>
 

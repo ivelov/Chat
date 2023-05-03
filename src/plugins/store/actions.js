@@ -256,9 +256,9 @@ export default {
         });
     });
   },
-  async addChat(state, email) {
+  async addChat(state, userId) {
     return new Promise((resolve, reject) => {
-      post("/V1/api/chats", { email: email })
+      post("/V1/api/chats", { userId: userId })
         .then((response) => {
           state.commit("setChat", response.data);
           state.commit("setActiveChat", response.data.id);
@@ -549,6 +549,17 @@ export default {
             hasMore: chat.hasMore,
           });
           resolve();
+        })
+        .catch((reason) => {
+          reject(reason.response);
+        });
+    });
+  },
+  async searchUsers(state, searchText) {
+    return new Promise((resolve, reject) => {
+      post(`/V1/api/users`, {searchText:searchText})
+        .then((response) => {
+          resolve(response.data);
         })
         .catch((reason) => {
           reject(reason.response);
