@@ -22,6 +22,7 @@
       </template>
 
       <div :class="message.fromYou ? 'message-right' : ''" class="message mb-2">
+        <!-- Datetime -->
         <p class="is-size-7">{{ message.created_at }}</p>
 
         <!-- On edit input -->
@@ -59,12 +60,13 @@
           v-if="message.attachment_type === 'image'"
           :src="`${apiUrl}/${message.attachment}`"
           alt="attachment"
+          class="mt-1"
         />
         <video
           v-if="message.attachment_type === 'video'"
           :src="`${apiUrl}/${message.attachment}`"
           controls
-          class="h-max-500"
+          class="h-max-500 mt-1"
         >
           Video error
         </video>
@@ -125,6 +127,7 @@ export default {
   margin-left: 0px;
   margin-right: auto;
   border-radius: 10px;
+  border-bottom-left-radius: 0px;
 
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -133,6 +136,8 @@ export default {
   text-align: right;
   margin-right: 0px;
   margin-left: auto;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 0px;
 }
 .h-max-500 {
   max-height: 500px;

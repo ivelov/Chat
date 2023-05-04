@@ -538,6 +538,11 @@ export default {
       get(`/V1/api/chats/${chatId}?offset=${offset}`)
         .then((response) => {
           let chat = response.data;
+          for (let i = 0; i < chat.messages.length; i++) {
+            chat.messages[i].created_at = parseDate(
+              new Date(chat.messages[i].created_at)
+            );
+          }
           
           state.commit("addNewMessages", {
             chatId: chat.id,
