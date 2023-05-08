@@ -154,7 +154,7 @@ export default {
   //async
   async login(state, data) {
     return new Promise((resolve, reject) => {
-      post("/V1/api/login", data)
+      post("/api/login", data)
         .then((response) => {
           axios.defaults.headers.common["Authorization"] =
             "Bearer " + response.data.token;
@@ -175,7 +175,7 @@ export default {
   },
   async logout(state) {
     return new Promise((resolve, reject) => {
-      post("/V1/api/logout")
+      post("/api/logout")
         .then((response) => {
           delete axios.defaults.headers.common["Authorization"];
 
@@ -194,7 +194,7 @@ export default {
   },
   async register(state, data) {
     return new Promise((resolve, reject) => {
-      post("/V1/api/register", data)
+      post("/api/register", data)
         .then((response) => {
           axios.defaults.headers.common["Authorization"] =
             "Bearer " + response.data.token;
@@ -215,7 +215,7 @@ export default {
   },
   async defineUser(state) {
     return new Promise((resolve) => {
-      get("/V1/api/user")
+      get("/api/user")
         .then((response) => {
           state.commit("setUser", response.data);
           state.dispatch("registerUserPrivateListener");
@@ -231,7 +231,7 @@ export default {
   },
   async sendMail(state) {
     return new Promise((resolve) => {
-      post("/V1/api/email/verification-notification")
+      post("/api/email/verification-notification")
         .then((response) => {
           state.commit("setUser", response.data);
           resolve(response.data);
@@ -245,7 +245,7 @@ export default {
   },
   async getChats(state) {
     return new Promise((resolve, reject) => {
-      get("/V1/api/chats")
+      get("/api/chats")
         .then((response) => {
           state.dispatch("setListenersToChats", response.data);
           state.dispatch("setLastMessageToChats", response.data);
@@ -258,7 +258,7 @@ export default {
   },
   async addChat(state, userId) {
     return new Promise((resolve, reject) => {
-      post("/V1/api/chats", { userId: userId })
+      post("/api/chats", { userId: userId })
         .then((response) => {
           state.commit("setChat", response.data);
           state.commit("setActiveChat", response.data.id);
@@ -287,7 +287,7 @@ export default {
         return;
       }
 
-      get("/V1/api/chats/" + state.getters.getActiveChatIndex)
+      get("/api/chats/" + state.getters.getActiveChatIndex)
         .then((response) => {
           let chat = response.data;
           for (let i = 0; i < chat.messages.length; i++) {
@@ -336,7 +336,7 @@ export default {
         data.append("attachment_type", attachment_type);
       }
 
-      post("/V1/api/chats/" + chatId, data)
+      post("/api/chats/" + chatId, data)
         .then((response) => {
           let message = response.data;
           message.created_at = parseDate(new Date(message.created_at));
@@ -368,7 +368,7 @@ export default {
         }
       }
 
-      post("/V1/api/user/" + state.state.user.id, formData)
+      post("/api/user/" + state.state.user.id, formData)
         .then((response) => {
           state.commit("setUser", response.data);
 
@@ -389,7 +389,7 @@ export default {
   },
   async markAsRead(state, chatId) {
     return new Promise((resolve, reject) => {
-      post(`/V1/api/chats/${chatId}/mark-as-read`)
+      post(`/api/chats/${chatId}/mark-as-read`)
         .then(() => {
           resolve();
         })
@@ -401,7 +401,7 @@ export default {
   registerEcho() {
     window.Echo = new Echo({
       broadcaster: "ably",
-      authEndpoint: "/V1/broadcasting/auth",
+      authEndpoint: "/broadcasting/auth",
       auth: {
         headers: { authorization: "Bearer " + VueCookies.get("apiToken") },
       },
@@ -445,7 +445,7 @@ export default {
 
       let chatId = state.getters.getActiveChatIndex;
 
-      post(`/V1/api/chats/${chatId}/${chat.muted ? "unmute" : "mute"}`)
+      post(`/api/chats/${chatId}/${chat.muted ? "unmute" : "mute"}`)
         .then(() => {
           state.commit("setChatMuted", { chatId: chatId, muted: !chat.muted });
           resolve();
@@ -487,7 +487,7 @@ export default {
         return;
       }
 
-      post(`/V1/api/messages/${messageId}/delete`)
+      post(`/api/messages/${messageId}/delete`)
         .then(() => {
           state.commit("deleteMessage", {
             chatId: chatId,
@@ -509,7 +509,7 @@ export default {
         return;
       }
 
-      post(`/V1/api/messages/${payload.messageId}`, {
+      post(`/api/messages/${payload.messageId}`, {
         message: payload.message,
       })
         .then(() => {
@@ -535,7 +535,7 @@ export default {
 
       let offset =
         state.state.chats[state.getters.getActiveChatIndex].messages.length;
-      get(`/V1/api/chats/${chatId}?offset=${offset}`)
+      get(`/api/chats/${chatId}?offset=${offset}`)
         .then((response) => {
           let chat = response.data;
           for (let i = 0; i < chat.messages.length; i++) {
@@ -562,7 +562,7 @@ export default {
   },
   async searchUsers(state, searchText) {
     return new Promise((resolve, reject) => {
-      post(`/V1/api/users`, {searchText:searchText})
+      post(`/api/users`, {searchText:searchText})
         .then((response) => {
           resolve(response.data);
         })
