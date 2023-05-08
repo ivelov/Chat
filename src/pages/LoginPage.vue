@@ -79,7 +79,7 @@ export default {
           }
         })
         .catch((response) => {
-          if (response.data.errors) {
+          if (response?.data.errors) {
             this.errors = response.data.errors;
           }
         })
