@@ -270,8 +270,13 @@ export default {
     return new Promise((resolve, reject) => {
       post("/api/chats", { userId: userId })
         .then((response) => {
-          state.commit("setChat", response.data);
-          state.commit("setActiveChat", response.data.id);
+          let chat = response.data;
+          state.commit("setChat", chat);
+          state.commit("setActiveChat", chat.id);
+          
+          if(chat.messages[0]){
+            state.commit("setLastMessage", {...chat.messages[0], chatId:chat.id});
+          }
 
           let chatInObject = {};
           chatInObject[response.data.id] = response.data;
