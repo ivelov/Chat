@@ -232,8 +232,9 @@ export default {
     checkSize(file) {
       if (file.size > this.fileMaxSize) {
         this.attachment = null;
+        let sizeInMb = this.fileMaxSize/1000000;
         this.$buefy.notification.open({
-          message: "Maximum file size is 8Mb",
+          message: `Maximum file size is ${sizeInMb}Mb`,
           type: "is-danger",
         });
       } else {
