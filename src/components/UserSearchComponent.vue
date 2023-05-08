@@ -66,6 +66,12 @@ export default {
         .dispatch("searchUsers", this.searchText)
         .then((users) => {
           this.users = users;
+          if(users.length === 0){
+            this.$buefy.notification.open({
+              message: "No results",
+              type: "is-danger",
+            });
+          }
         })
         .finally(() => {
           this.loading = false;
