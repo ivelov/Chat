@@ -30,7 +30,7 @@
           <!-- Avatar -->
           <img
             class="avatar"
-            :src="`${apiUrl}/${chat.avatar}`"
+            :src="`${apiUrl}/public/${chat.avatar}`"
             alt="chat avatar"
           />
 

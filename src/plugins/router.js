@@ -1,10 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import store from "./store";
 import HomePage from "../pages/HomePage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import EmailConfirmPage from "../pages/EmailConfirmPage.vue";
+import VueCookies from "vue-cookies";
 
 Vue.use(VueRouter);
 const router = new VueRouter({
@@ -40,13 +40,13 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.hideForAuth) {
-    if (store.getters.isAuth) {
+    if (VueCookies.get('emailVerified')) {
       next({ path: "/" });
     } else {
       next();
     }
   } else if (to.meta.requireAuth) {
-    if (store.getters.isAuth) {
+    if (VueCookies.get('emailVerified')) {
       next();
     } else {
       next({ path: "/login" });

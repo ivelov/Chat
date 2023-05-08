@@ -140,7 +140,6 @@ export default {
       attachment: null,
       attachmentModal: false,
       fileMaxSize: 8000000,
-      apiUrl: process.env.VUE_APP_API_URL,
       autoScroll: true,
       chatScrollTop: 0,
       newLoading: false,

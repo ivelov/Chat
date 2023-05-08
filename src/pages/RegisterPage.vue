@@ -87,7 +87,11 @@ export default {
           this.mustVerificate = true;
         })
         .catch((response) => {
-          this.errors = response?.data.errors;
+          if (response?.data?.errors) {
+            this.errors = response.data.errors;
+          }else{
+            console.log(response);
+          }
         })
         .finally(() => {
           this.loading = false;

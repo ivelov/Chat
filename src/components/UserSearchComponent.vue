@@ -21,7 +21,7 @@
 
       <b-table :data="users" hoverable :loading="loading" @click="addChat">
         <b-table-column field="photo" label="Photo" width="50" v-slot="props">
-          <img class="avatar" :src="apiUrl + '/' + props.row.photo" alt="avatar" />
+          <img class="avatar" :src="apiUrl + '/public/' + props.row.photo" alt="avatar" />
         </b-table-column>
 
         <b-table-column field="name" label="Name" width="150" v-slot="props">

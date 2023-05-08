@@ -6,7 +6,7 @@ export default {
   },
   setUser(state, user) {
     if (user) {
-      user.photo = `${process.env.VUE_APP_API_URL}/${user.photo}`;
+      user.photo = `${process.env.VUE_APP_API_URL}/public/${user.photo}`;
     }
     state.user = user;
   },

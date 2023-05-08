@@ -57,12 +57,12 @@
         <p v-if="!message.editing" v-html="message.message"></p>
         <img
           v-if="message.attachment_type === 'image'"
-          :src="`${apiUrl}/${message.attachment}`"
+          :src="`${apiUrl}/public/${message.attachment}`"
           alt="attachment"
         />
         <video
           v-if="message.attachment_type === 'video'"
-          :src="`${apiUrl}/${message.attachment}`"
+          :src="`${apiUrl}/public/${message.attachment}`"
           controls
           class="h-max-500"
         >

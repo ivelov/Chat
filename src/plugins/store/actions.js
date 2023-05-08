@@ -156,7 +156,7 @@ export default {
     return new Promise((resolve, reject) => {
       post("/api/login", data)
         .then((response) => {
-          if(!response.data.email_verified_at){
+          if(!response?.data.user?.email_verified_at){
             resolve(response.data);
             return;
           }
@@ -185,7 +185,7 @@ export default {
           delete axios.defaults.headers.common["Authorization"];
 
           VueCookies.remove("apiToken");
-          VueCookies.set("emailVerified", false);
+          VueCookies.remove("emailVerified");
 
           state.commit("setUser", null);
           state.commit("setChats", {});
@@ -206,7 +206,7 @@ export default {
             "Bearer " + response.data.token;
 
           VueCookies.set("apiToken", response.data.token);
-          VueCookies.set("emailVerified", false);
+          VueCookies.remove("emailVerified");
 
           state.commit("setUser", response.data.user);
 
@@ -225,9 +225,11 @@ export default {
       get("/api/user")
         .then((response) => {
           state.commit("setUser", response.data);
-          VueCookies.set("emailVerified", response.data.email_verified_at);
           if (response.data.email_verified_at) {
             state.dispatch("registerUserPrivateListener");            
+            VueCookies.set("emailVerified", true);
+          }else{
+            VueCookies.remove("emailVerified");
           }
 
           resolve(response.data);
@@ -235,7 +237,7 @@ export default {
         .catch(() => {
           state.commit("setUser", null);
           VueCookies.remove("apiToken");
-          VueCookies.set("emailVerified", false);
+          VueCookies.remove("emailVerified");
           resolve(false);
         });
     });
@@ -250,7 +252,7 @@ export default {
         .catch(() => {
           state.commit("setUser", null);
           VueCookies.remove("apiToken");
-          VueCookies.set("emailVerified", false);
+          VueCookies.remove("emailVerified");
           resolve(false);
         });
     });
@@ -413,7 +415,8 @@ export default {
   registerEcho() {
     window.Echo = new Echo({
       broadcaster: "ably",
-      authEndpoint: "/broadcasting/auth",
+      // authEndpoint: "/V1/broadcasting/auth",
+      authEndpoint: process.env.VUE_APP_API_URL+"/broadcasting/auth",
       auth: {
         headers: { authorization: "Bearer " + VueCookies.get("apiToken") },
       },
