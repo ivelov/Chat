@@ -1,6 +1,7 @@
+import VueCookies from "vue-cookies";
 export default {
-  isAuth(state) {
-    return state.user;
+  isAuth() {
+    return VueCookies.get('emailVerified');
   },
   getUserName(state){
     if(!state.user){

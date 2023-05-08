@@ -46,7 +46,7 @@ export default {
     url = `${url}?expires=${expires}&signature=${signature}`;
 
     this.axios
-      .post("/V1/api/" + url)
+      .post("/api/" + url)
       .then(() => {
         this.success = true;
       })
