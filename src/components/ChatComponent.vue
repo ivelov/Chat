@@ -193,9 +193,9 @@ export default {
           attachment: this.attachment,
         })
         .catch((response) => {
-          if (response?.status === 500) {
+          if (response?.status === 500 || response?.status === 422) {
             this.$buefy.notification.open({
-              message: "An internal error occured",
+              message: "An error occured",
               type: "is-danger",
             });
           }else if(response){
