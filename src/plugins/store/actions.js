@@ -226,7 +226,9 @@ export default {
         .then((response) => {
           state.commit("setUser", response.data);
           VueCookies.set("emailVerified", response.data.email_verified_at);
-          state.dispatch("registerUserPrivateListener");
+          if (response.data.email_verified_at) {
+            state.dispatch("registerUserPrivateListener");            
+          }
 
           resolve(response.data);
         })
