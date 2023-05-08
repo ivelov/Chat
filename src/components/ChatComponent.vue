@@ -198,7 +198,7 @@ export default {
               message: "An internal error occured",
               type: "is-danger",
             });
-          }else{
+          }else if(response){
             console.log(response);
           }
         })

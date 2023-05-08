@@ -156,10 +156,6 @@ export default {
     return new Promise((resolve, reject) => {
       post("/api/login", data)
         .then((response) => {
-          if(!response?.data.user?.email_verified_at){
-            resolve(response.data);
-            return;
-          }
           axios.defaults.headers.common["Authorization"] =
             "Bearer " + response.data.token;
 

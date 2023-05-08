@@ -50,11 +50,11 @@ export default {
 
     if (!newMessage) {
       if (!message?.attachment_type) {
-        Vue.set(state.chats[message.chat_id], "last_message", "");
+        Vue.set(state.chats[message.chatId], "last_message", "");
         return;
       } else {
         Vue.set(
-          state.chats[message.chat_id],
+          state.chats[message.chatId],
           "last_message",
           message.attachment_type
         );
@@ -64,7 +64,7 @@ export default {
 
     newMessage =
       newMessage.length > 14 ? newMessage.substring(0, 14) + "..." : newMessage;
-    Vue.set(state.chats[message.chat_id], "last_message", newMessage);
+    Vue.set(state.chats[message.chatId], "last_message", newMessage);
   },
   resetUnreadCount(state, chatId) {
     if (!state.chats[chatId]) {

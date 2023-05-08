@@ -71,8 +71,8 @@ export default {
       this.loading = true;
       this.$store
         .dispatch("login", this.data)
-        .then(() => {
-          if (!this.$store.state.user.email_verified_at) {
+        .then((response) => {
+          if (!response.user?.email_verified_at) {
             this.mustVerificate = true;
           } else {
             this.$router.push("/");
