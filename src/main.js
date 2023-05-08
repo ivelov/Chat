@@ -23,7 +23,8 @@ window.Ably = Ably;
 if (VueCookies.get("apiToken")) {
   window.Echo = new Echo({
     broadcaster: "ably",
-    authEndpoint: "/V1/broadcasting/auth",
+    // authEndpoint: "/V1/broadcasting/auth",
+    authEndpoint: process.env.VUE_APP_API_URL+"/broadcasting/auth",
     auth: {
       headers: { authorization: "Bearer " + VueCookies.get("apiToken") },
     },
