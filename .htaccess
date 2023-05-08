@@ -1,0 +1,17 @@
+<IfModule mod_negotiation.c>
+  Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /dist
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+
+  AuthType Basic
+  AuthName "Some Name"
+  AuthUserFile /usr/home/testing_ground/.htpasswd
+  require valid-user
+</IfModule>
