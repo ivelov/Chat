@@ -275,15 +275,6 @@ export default {
 .h-full {
   height: 100%;
 }
-.overflow-y-scroll-hidden {
-  overflow-y: scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.overflow-y-scroll-hidden::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
 .message {
   max-width: 90%;
   padding: 5px;

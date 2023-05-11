@@ -25,6 +25,15 @@ export default {
 a:hover{
   color: #b9a6ee !important;
 }
+.overflow-y-scroll-hidden {
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.overflow-y-scroll-hidden::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
 .bg-main{
   background-color: #242f3d;
 }
