@@ -71,4 +71,7 @@ a:hover{
 .table-dark table tbody tr:hover{
   background-color: #17212b !important;
 }
+.border-dark{
+  border-color: #0c1116 !important;
+}
 </style>

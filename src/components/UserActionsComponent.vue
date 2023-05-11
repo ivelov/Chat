@@ -89,7 +89,7 @@
             <b-icon class="file-icon" icon="upload"></b-icon>
             <span class="file-label">Click to upload</span>
           </span>
-          <span class="file-name" v-if="userData.photo">
+          <span class="file-name border-dark" v-if="userData.photo">
             {{ userData.photo.name }}
           </span>
         </b-upload>
