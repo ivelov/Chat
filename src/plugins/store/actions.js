@@ -59,6 +59,10 @@ function getChatCallback(state, chatId) {
       console.error("New message to chat that do not exist");
       return;
     }
+    if (checkIfMessageExist(chat, message.id)) {
+      console.error("New message already exist");
+      return;
+    }
 
     state.commit("addNewMessages", {
       messages: [
@@ -101,6 +105,16 @@ function getChatCallback(state, chatId) {
       state.dispatch("markAsRead", chatId);
     }
   };
+}
+
+function checkIfMessageExist(chat, messageId) {
+  let limit = 10;
+  for (let i = 0; i < chat.messages.length && i < limit; i++) {
+    if (chat.messages[i].id === messageId) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function getMessageUpdateCallback(state, chatId) {

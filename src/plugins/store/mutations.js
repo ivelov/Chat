@@ -31,18 +31,41 @@ export default {
     state.activeChatIndex = index;
   },
   addNewMessages(state, payload) {
-    if (!state.chats[payload.chatId]) {
+    let chat = state.chats[payload.chatId];
+    if (!chat) {
       return;
     }
 
-    if (!state.chats[payload.chatId].messages) {
-      state.chats[payload.chatId].messages = [];
+    if (!chat.messages) {
+      chat.messages = [];
     }
 
+    let limit = 10;
+    let idsToSearch = []; //id`s of last or first messages
     if (payload.toBack) {
-      state.chats[payload.chatId].messages.push(...payload.messages);
+      for (let i = chat.messages.length-1; i >= 0 && chat.messages.length - i < limit; i--) {
+        idsToSearch.push(chat.messages[i].id);
+      }
+    }else{
+      for (let i = 0; i < chat.messages.length && i < limit; i++) {
+        idsToSearch.push(chat.messages[i].id);
+      }
+    }
+    
+    //remove messages that already exist
+    payload.messages.filter((message)=>{
+      for (let i = 0; i < idsToSearch.length; i++) {
+        if(message.id === idsToSearch[i]){
+          return false;
+        }
+      }
+      return true;
+    })
+
+    if (payload.toBack) {
+      chat.messages.push(...payload.messages);
     } else {
-      state.chats[payload.chatId].messages.unshift(...payload.messages);
+      chat.messages.unshift(...payload.messages);
     }
   },
   setLastMessage(state, message) {
