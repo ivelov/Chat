@@ -1,5 +1,5 @@
 <template>
-  <div class="has-background-light p-3" v-if="$store.getters.isAuth">
+  <div class="bg-main p-3" v-if="$store.getters.isAuth">
     <div class="is-flex is-justify-content-space-between">
       <!-- User info -->
       <div class="is-flex is-align-content-center">
@@ -13,7 +13,7 @@
       <div>
         <b-button
           @click="logout"
-          class="is-primary"
+          class="bg-btn"
           :loading="logoutLoading"
           :disabled="logoutLoading"
         >
@@ -25,11 +25,13 @@
     <!-- New user data form -->
     <form action="" class="form-small mt-3">
       <b-field
+        custom-class="has-text-white"
         label="New nickname"
         :type="errors && errors.nickname ? 'is-danger' : ''"
         :message="errors && errors.nickname ? errors.nickname[0] : ''"
       >
         <b-input
+          custom-class="input-dark"
           type="text"
           v-model="userData.nickname"
           @blur="errors.nickname = null"
@@ -38,11 +40,13 @@
       </b-field>
 
       <b-field
+        custom-class="has-text-white"
         label="New name"
         :type="errors && errors.name ? 'is-danger' : ''"
         :message="errors && errors.name ? errors.name[0] : ''"
       >
         <b-input
+          custom-class="input-dark"
           required
           type="text"
           v-model="userData.name"
@@ -52,11 +56,16 @@
       </b-field>
 
       <b-field
+        custom-class="has-text-white"
         label="Change language"
         :type="errors && errors.lang ? 'is-danger' : ''"
         :message="errors && errors.lang ? errors.lang[0] : ''"
       >
-        <b-select v-model="userData.lang" @blur="errors.lang = null">
+        <b-select
+          v-model="userData.lang"
+          @blur="errors.lang = null"
+          class="select-dark"
+        >
           <option value="en">English</option>
           <option value="ru">Russian</option>
           <option value="ua">Ukrainian</option>
@@ -64,6 +73,7 @@
       </b-field>
 
       <b-field
+        custom-class="has-text-white"
         label="Change photo"
         :type="errors && errors.photo ? 'is-danger' : ''"
         :message="errors && errors.photo ? errors.photo[0] : ''"
@@ -75,7 +85,7 @@
           @blur="errors.photo = null"
           @input="checkSize"
         >
-          <span class="file-cta">
+          <span class="file-cta input-dark">
             <b-icon class="file-icon" icon="upload"></b-icon>
             <span class="file-label">Click to upload</span>
           </span>
@@ -88,18 +98,16 @@
       <b-button
         native-type="submit"
         @click.prevent="submit"
-        class="is-primary"
+        class="bg-btn"
         :loading="loading"
         :disabled="loading"
         >Save</b-button
       >
-
     </form>
   </div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -138,26 +146,27 @@ export default {
       }
       this.loading = true;
 
-      this.$store.dispatch('updateUser', this.userData)
-      .then(()=>{
-        this.$buefy.notification.open({
+      this.$store
+        .dispatch("updateUser", this.userData)
+        .then(() => {
+          this.$buefy.notification.open({
             message: "Data saved!",
             type: "is-success",
           });
-      })
-      .catch((response)=>{
-        if(!response?.data?.errors){
-          console.error(response);
-          return;
-        }
+        })
+        .catch((response) => {
+          if (!response?.data?.errors) {
+            console.error(response);
+            return;
+          }
 
-        for (const key in response.data.errors) {
-          this.errors[key] = response.data.errors[key];
-        }
-      })
-      .finally(()=>{
-        this.loading = false;
-      })
+          for (const key in response.data.errors) {
+            this.errors[key] = response.data.errors[key];
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     checkSize(file) {
       if (file.size > this.fileMaxSize) {
@@ -177,7 +186,7 @@ export default {
   width: 50px;
   height: 50px;
 }
-.form-small{
+.form-small {
   max-width: 300px;
 }
 </style>

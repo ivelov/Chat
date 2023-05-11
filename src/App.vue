@@ -47,12 +47,25 @@ a:hover{
   color: #f5f5f5 !important;
   border-color: transparent !important;
 }
-.input-dark{
+.input-dark, .select-dark{
   background-color: #17212b !important;
-  border-color: black !important;
+  border-color: #0c1116 !important;
+  color: #f5f5f5 !important;
+}
+.select-dark option{
   color: #f5f5f5 !important;
 }
 .has-text-white{
   color: #f5f5f5;
+}
+.table-dark table{
+  background-color: #242f3d;
+  color: #f5f5f5;
+}
+.table-dark table thead th{
+  color: #f5f5f5;
+}
+.table-dark table tbody tr{
+  background-color: #17212b;
 }
 </style>

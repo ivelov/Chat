@@ -1,15 +1,14 @@
 <template>
-  <div class="has-background-light p-3">
-
+  <div class="bg-main p-3">
     <form action="" class="form-small mt-3">
       <b-field label="Search for users">
-        <b-input type="text" v-model="searchText"> </b-input>
+        <b-input custom-class="input-dark" type="text" v-model="searchText"> </b-input>
       </b-field>
 
       <b-button
         native-type="submit"
         @click.prevent="search"
-        class="is-primary"
+        class="bg-btn"
         :loading="loading"
         :disabled="loading"
         >Search</b-button
@@ -19,7 +18,7 @@
     <div v-if="users.length > 0" class="mt-3">
       <p class="mb-3">Results:</p>
 
-      <b-table :data="users" hoverable :loading="loading" @click="addChat">
+      <b-table :data="users" hoverable :loading="loading" @click="addChat" class="table-dark">
         <b-table-column field="photo" label="Photo" width="50" v-slot="props">
           <img class="avatar" :src="apiUrl + '/public/' + props.row.photo" alt="avatar" />
         </b-table-column>

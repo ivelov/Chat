@@ -1,7 +1,7 @@
 <template>
   <article v-if="message">
     <b-tooltip
-      type="is-light"
+      type="is-dark"
       :triggers="message.fromYou ? ['contextmenu'] : []"
       :position="message.fromYou ? 'is-left' : 'is-right'"
       :auto-close="['outside', 'escape', 'inside']"
