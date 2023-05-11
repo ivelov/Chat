@@ -1,5 +1,5 @@
 <template>
-  <section class="has-background-info-dark is-flex is-flex-direction-column">
+  <section class="bg-main is-flex is-flex-direction-column">
     <!-- User info -->
     <div class="is-flex is-align-content-center" v-if="$store.getters.isAuth">
       <img

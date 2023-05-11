@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="is-flex p-4 has-background-info-dark is-overlay">
+    <div class="is-flex p-4 bg-main is-overlay">
       <ChatsComponent v-if="!$store.getters.getActiveChat || windowWidth > 768" class="left pr-4 mx-auto"></ChatsComponent>
       <ChatComponent
         v-if="windowWidth > 768 || $store.getters.getActiveChat"

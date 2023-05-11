@@ -1,13 +1,13 @@
 <template>
-  <section class="h-full has-background-link-dark">
+  <section class="h-full bg-head">
     <div
-      class="is-flex is-flex-direction-column is-justify-content-space-between h-full has-background-color-dodger"
+      class="is-flex is-flex-direction-column is-justify-content-space-between h-full bg-chat"
       :class="chat?'':'is-hidden'"
     >
       <!-- Header -->
       <div
         v-if="chat"
-        class="is-flex is-justify-content-space-between is-align-content-center px-3 py-1 h-50 is-flex-grow-0 has-text-white has-background-link-dark"
+        class="is-flex is-justify-content-space-between is-align-content-center px-3 py-1 h-50 is-flex-grow-0 has-text-white bg-head"
       >
         <div class="is-flex">
           <!-- Back btn -->
@@ -35,7 +35,7 @@
 
       <!-- Messages -->
       <div
-        class="is-flex-grow-1 has-background-color-dodger overflow-y-scroll-hidden py-5 px-2"
+        class="is-flex-grow-1 bg-chat overflow-y-scroll-hidden py-5 px-2"
         v-chat-scroll="{always: false, enabled: autoScroll}"
         ref="chat"
       >
@@ -274,9 +274,6 @@ export default {
 <style scoped>
 .h-full {
   height: 100%;
-}
-.has-background-color-dodger {
-  background-color: dodgerblue;
 }
 .overflow-y-scroll-hidden {
   overflow-y: scroll;

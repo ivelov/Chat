@@ -21,7 +21,7 @@
         </ul>
       </template>
 
-      <div :class="message.fromYou ? 'message-right' : ''" class="message mb-2">
+      <div :class="message.fromYou ? 'message-right' : ''" class="message mb-2 bg-message">
         <!-- Datetime -->
         <p class="is-size-7">{{ message.created_at }}</p>
 
@@ -120,7 +120,6 @@ export default {
 .message {
   max-width: 90%;
   min-width: 120px;
-  background-color: aqua;
   padding: 5px;
   padding-left: 15px;
   padding-right: 15px;

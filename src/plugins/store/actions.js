@@ -15,7 +15,7 @@ function post(url, data = {}) {
         console.error(reason);
 
         if (
-          reason.response.status === 401 &&
+          reason?.response?.status === 401 &&
           router.currentRoute.path !== "/login"
         ) {
           router.push("/login");
@@ -37,7 +37,7 @@ function get(url) {
         console.error(reason);
 
         if (
-          reason.response.status === 401 &&
+          reason?.response?.status === 401 &&
           router.currentRoute.path !== "/login"
         ) {
           router.push("/login");

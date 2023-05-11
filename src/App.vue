@@ -17,3 +17,21 @@ export default {
   }
 }
 </script>
+
+<style>
+#app{
+  color: #f5f5f5;
+}
+.bg-main{
+  background-color: #242f3d;
+}
+.bg-head{
+  background-color: #17212b;
+}
+.bg-chat{
+  background-color: #0e1621;
+}
+.bg-message{
+  background-color: #182533;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="has-text-black">
     <div class="mt-4"></div>
     <section class="container">
       <p v-if="success" class="has-text-centered">
