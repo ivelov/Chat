@@ -25,7 +25,7 @@
     <!-- New user data form -->
     <form action="" class="form-small mt-3">
       <b-field
-        custom-class="has-text-white"
+        custom-class="text-white"
         label="New nickname"
         :type="errors && errors.nickname ? 'is-danger' : ''"
         :message="errors && errors.nickname ? errors.nickname[0] : ''"
@@ -40,7 +40,7 @@
       </b-field>
 
       <b-field
-        custom-class="has-text-white"
+        custom-class="text-white"
         label="New name"
         :type="errors && errors.name ? 'is-danger' : ''"
         :message="errors && errors.name ? errors.name[0] : ''"
@@ -56,7 +56,7 @@
       </b-field>
 
       <b-field
-        custom-class="has-text-white"
+        custom-class="text-white"
         label="Change language"
         :type="errors && errors.lang ? 'is-danger' : ''"
         :message="errors && errors.lang ? errors.lang[0] : ''"
@@ -73,7 +73,7 @@
       </b-field>
 
       <b-field
-        custom-class="has-text-white"
+        custom-class="text-white"
         label="Change photo"
         :type="errors && errors.photo ? 'is-danger' : ''"
         :message="errors && errors.photo ? errors.photo[0] : ''"

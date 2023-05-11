@@ -55,7 +55,7 @@ a:hover{
 .select-dark option{
   color: #f5f5f5 !important;
 }
-.has-text-white{
+.text-white{
   color: #f5f5f5;
 }
 .table-dark table{
@@ -66,6 +66,9 @@ a:hover{
   color: #f5f5f5;
 }
 .table-dark table tbody tr{
+  background-color: #242f3d;
+}
+.table-dark table tbody tr:hover{
   background-color: #17212b;
 }
 </style>

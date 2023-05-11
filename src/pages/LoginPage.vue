@@ -4,7 +4,7 @@
     <section class="container">
       <form action="">
         <b-field
-          custom-class="has-text-white"
+          custom-class="text-white"
           label="Email"
           :type="errors && errors.email ? 'is-danger' : ''"
           :message="errors && errors.email ? errors.email[0] : ''"
@@ -19,7 +19,7 @@
           </b-input>
         </b-field>
         <b-field
-          custom-class="has-text-white"
+          custom-class="text-white"
           label="Password"
           :type="errors && errors.password ? 'is-danger' : ''"
           :message="errors && errors.password ? errors.password[0] : ''"

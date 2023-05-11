@@ -7,7 +7,7 @@
       <!-- Header -->
       <div
         v-if="chat"
-        class="is-flex is-justify-content-space-between is-align-content-center px-3 py-1 h-50 is-flex-grow-0 has-text-white bg-head"
+        class="is-flex is-justify-content-space-between is-align-content-center px-3 py-1 h-50 is-flex-grow-0 text-white bg-head"
       >
         <div class="is-flex">
           <!-- Back btn -->
@@ -100,7 +100,7 @@
       v-if="!chat"
       class="h-full is-flex is-align-content-center is-flex-direction-column"
     >
-      <p class="my-auto is-size-2 has-text-white has-text-centered">
+      <p class="my-auto is-size-2 text-white has-text-centered">
         Select a chat
       </p>
     </div>

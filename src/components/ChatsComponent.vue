@@ -8,7 +8,7 @@
         alt="avatar"
         @click="photoClick"
       />
-      <span class="my-auto ml-3 has-text-white">
+      <span class="my-auto ml-3 text-white">
         {{ userName }}
       </span>
     </div>
@@ -20,7 +20,7 @@
 
     <!-- Chat list -->
     <div class="is-flex-grow-1 overflow-y-auto">
-      <ul class="mt-3 has-text-white chat-list">
+      <ul class="mt-3 text-white chat-list">
         <li
           class="is-flex mb-3"
           v-for="(chat, id) in $store.state.chats"
