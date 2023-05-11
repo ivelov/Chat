@@ -69,6 +69,6 @@ a:hover{
   background-color: #242f3d;
 }
 .table-dark table tbody tr:hover{
-  background-color: #17212b;
+  background-color: #17212b !important;
 }
 </style>

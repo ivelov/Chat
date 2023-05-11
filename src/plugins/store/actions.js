@@ -285,7 +285,12 @@ export default {
       post("/api/chats", { userId: userId })
         .then((response) => {
           let chat = response.data;
-          state.commit("setChat", chat);
+          for (let i = 0; i < chat.messages.length; i++) {
+            chat.messages[i].created_at = parseDate(
+              new Date(chat.messages[i].created_at)
+            );
+          }
+          state.commit("setChat", chat);//
           state.commit("setActiveChat", chat.id);
           
           if(chat.messages[0]){
