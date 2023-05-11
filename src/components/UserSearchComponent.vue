@@ -1,7 +1,7 @@
 <template>
   <div class="bg-main p-3">
     <form action="" class="form-small mt-3">
-      <b-field label="Search for users">
+      <b-field custom-class="has-text-white" label="Search for users">
         <b-input custom-class="input-dark" type="text" v-model="searchText"> </b-input>
       </b-field>
 

@@ -47,7 +47,7 @@ a:hover{
   color: #f5f5f5 !important;
   border-color: transparent !important;
 }
-.input-dark, .select-dark{
+.input-dark, .select-dark select{
   background-color: #17212b !important;
   border-color: #0c1116 !important;
   color: #f5f5f5 !important;
