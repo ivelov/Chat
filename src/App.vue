@@ -34,4 +34,10 @@ export default {
 .bg-message{
   background-color: #182533;
 }
+.bg-btn{
+  background-color: #2b5278;
+}
+.bg-btn:hover{
+  background-color: #1d4a77;
+}
 </style>

@@ -42,7 +42,7 @@
         <ul class="is-flex is-flex-direction-column-reverse" ref="chatInner" v-if="chat">
           <li
             v-if="messagesLoading"
-            class="message message-right mb-2 is-relative h-34 loading"
+            class="message message-right mb-2 is-relative h-34 loading bg-message"
           >
             Sending...
           </li>
@@ -81,7 +81,7 @@
           <b-input
             v-model="message"
             class="child-h-full"
-            custom-class="h-50 resize-none is-clipped pl-40"
+            custom-class="h-50 resize-none is-clipped pl-40 input-dark"
             type="textarea"
             rows="1"
             icon="plus-circle-outline"
@@ -286,7 +286,6 @@ export default {
 }
 .message {
   max-width: 90%;
-  background-color: aqua;
   padding: 5px;
   padding-left: 15px;
   padding-right: 15px;
@@ -325,5 +324,9 @@ export default {
 }
 .pl-40{
   padding-left: 40px;
+}
+.input-dark{
+  border-color: black;
+  color: white;
 }
 </style>
