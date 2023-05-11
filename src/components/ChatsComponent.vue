@@ -15,7 +15,7 @@
 
     <!-- New chat btn -->
     <div class="is-flex is-align-content-center mt-5">
-      <b-button @click="addChatModal = true" class="is-primary"> New chat </b-button>
+      <b-button @click="addChatModal = true" class="bg-btn"> New chat </b-button>
     </div>
 
     <!-- Chat list -->

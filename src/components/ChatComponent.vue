@@ -13,7 +13,7 @@
           <!-- Back btn -->
           <b-button
             @click="back"
-            class="is-primary my-auto mr-3 is-hidden-tablet"
+            class="bg-btn my-auto mr-3 is-hidden-tablet"
           >
             <b-icon icon="arrow-left"> </b-icon>
           </b-button>
@@ -25,7 +25,7 @@
         <!-- Mute btn -->
         <b-button
           @click="toggleMute"
-          class="is-primary my-auto"
+          class="bg-btn my-auto"
           :disabled="muteLoading"
           :loading="muteLoading"
         >
@@ -81,7 +81,7 @@
           <b-input
             v-model="message"
             class="child-h-full"
-            custom-class="h-50 resize-none is-clipped pl-40 input-dark"
+            custom-class="h-50 resize-none is-clipped pl-40 input-dark bg-head"
             type="textarea"
             rows="1"
             icon="plus-circle-outline"
@@ -107,7 +107,7 @@
 
     <!-- Attachment modal -->
     <b-modal v-model="attachmentModal" trap-focus>
-      <div class="has-background-light w-max p-3 border-3 mx-auto">
+      <div class="has-background-light w-max p-3 border-3 mx-auto has-text-modal">
         <b-upload
           v-model="attachment"
           drag-drop
@@ -309,6 +309,9 @@ export default {
 }
 .border-3 {
   border-radius: 15px;
+}
+.has-text-modal{
+  color: #4a4a4a;
 }
 </style>
 

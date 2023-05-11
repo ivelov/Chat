@@ -36,6 +36,8 @@ export default {
 }
 .bg-btn{
   background-color: #2b5278;
+  border-color: transparent;
+  color: #fff;
 }
 .bg-btn:hover{
   background-color: #1d4a77;
