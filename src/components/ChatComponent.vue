@@ -81,7 +81,7 @@
           <b-input
             v-model="message"
             class="child-h-full"
-            custom-class="h-50 resize-none is-clipped pl-40 input-dark bg-head"
+            custom-class="h-50 resize-none is-clipped pl-40 input-dark"
             type="textarea"
             rows="1"
             icon="plus-circle-outline"
@@ -327,9 +327,5 @@ export default {
 }
 .pl-40{
   padding-left: 40px;
-}
-.input-dark{
-  border-color: black;
-  color: white;
 }
 </style>

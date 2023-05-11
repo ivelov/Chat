@@ -22,6 +22,9 @@ export default {
 #app{
   color: #f5f5f5;
 }
+a:hover{
+  color: #b9a6ee !important;
+}
 .bg-main{
   background-color: #242f3d;
 }
@@ -35,11 +38,21 @@ export default {
   background-color: #182533;
 }
 .bg-btn{
-  background-color: #2b5278;
-  border-color: transparent;
-  color: #fff;
+  background-color: #2b5278 !important;
+  border-color: transparent !important;
+  color: #f5f5f5 !important;
 }
 .bg-btn:hover{
-  background-color: #1d4a77;
+  background-color: #1d4a77 !important;
+  color: #f5f5f5 !important;
+  border-color: transparent !important;
+}
+.input-dark{
+  background-color: #17212b !important;
+  border-color: black !important;
+  color: #f5f5f5 !important;
+}
+.has-text-white{
+  color: #f5f5f5;
 }
 </style>

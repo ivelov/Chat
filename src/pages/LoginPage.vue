@@ -1,15 +1,17 @@
 <template>
-  <div class="has-text-black">
+  <div class="bg-main is-overlay">
     <div class="mt-4"></div>
     <section class="container">
       <form action="">
         <b-field
+          custom-class="has-text-white"
           label="Email"
           :type="errors && errors.email ? 'is-danger' : ''"
           :message="errors && errors.email ? errors.email[0] : ''"
         >
           <b-input
             required
+            custom-class="input-dark"
             type="email"
             v-model="data.email"
             @blur="errors.email = null"
@@ -17,11 +19,13 @@
           </b-input>
         </b-field>
         <b-field
+          custom-class="has-text-white"
           label="Password"
           :type="errors && errors.password ? 'is-danger' : ''"
           :message="errors && errors.password ? errors.password[0] : ''"
         >
           <b-input
+            custom-class="input-dark"
             minlength="6"
             required
             type="password"
@@ -32,8 +36,7 @@
         <b-button
           native-type="submit"
           @click.prevent="submit"
-          class="is-primary"
-          outlined
+          class="bg-btn"
           :loading="loading"
           :disabled="loading"
           >Login</b-button
@@ -81,7 +84,7 @@ export default {
         .catch((response) => {
           if (response?.data?.errors) {
             this.errors = response.data.errors;
-          }else{
+          } else {
             console.log(response);
           }
         })
